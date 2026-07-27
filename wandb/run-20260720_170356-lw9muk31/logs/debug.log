@@ -1,0 +1,13 @@
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_setup.py:_flush():81] Current SDK version is 0.28.1
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_setup.py:_flush():81] Configure stats pid to 27631
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:setup_run_log_directory():729] Logging user logs to /Users/jonlourie/GNN_project_laundry/Multi-GNN/wandb/run-20260720_170356-lw9muk31/logs/debug.log
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:setup_run_log_directory():730] Logging internal logs to /Users/jonlourie/GNN_project_laundry/Multi-GNN/wandb/run-20260720_170356-lw9muk31/logs/debug-internal.log
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:init():772] calling init triggers
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:init():777] wandb.init called with sweep_config: {}
+config: {'epochs': 100, 'batch_size': 8192, 'model': 'gin', 'data': 'Small_HI', 'num_neighbors': [100, 100], 'lr': 0.006213266113989207, 'n_hidden': 66.00315515631006, 'n_gnn_layers': 2, 'loss': 'ce', 'w_ce1': 1.0000182882773443, 'w_ce2': 6.275014431494497, 'dropout': 0.00983468338330501, 'final_dropout': 0.10527690625126304, 'n_heads': None, '_wandb': {}}
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:init():820] starting backend
+2026-07-20 17:03:56,735 INFO    MainThread:27631 [wandb_init.py:init():835] sending inform_init request
+2026-07-20 17:03:56,851 INFO    MainThread:27631 [wandb_init.py:init():840] backend started and connected
+2026-07-20 17:03:56,875 INFO    MainThread:27631 [wandb_init.py:init():910] updated telemetry
+2026-07-20 17:03:56,983 INFO    MainThread:27631 [wandb_init.py:init():933] communicating run to backend with 90.0 second timeout

@@ -1,0 +1,96 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            7003ko5pn469104z707r0lw4x943om33:
+                apple:
+                    ecpuCores: 2
+                    gpuCores: 16
+                    macModel: MacBookPro18,1
+                    memoryGb: 16
+                    name: Apple M1 Pro
+                    pcpuCores: 8
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "3221225472"
+                args:
+                    - --data
+                    - Small_HI
+                    - --model
+                    - gin
+                    - --n_epochs
+                    - "1"
+                    - --reverse_mp
+                    - --ego
+                codePath: main.py
+                codePathLocal: main.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "994662584320"
+                        used: "900579532800"
+                email: jacoblourie@gmail.com
+                executable: /opt/anaconda3/envs/multignn/bin/python
+                git:
+                    commit: 252b0252afca109d1d216c411c59ff70753b25fc
+                    remote: https://github.com/jlowritescode/Multi-GNN.git
+                host: Jons-MacBook-Pro-2.local
+                memory:
+                    total: "17179869184"
+                os: macOS-26.4.1-arm64-arm-64bit
+                program: /Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py
+                python: CPython 3.9.25
+                root: /Users/jonlourie/GNN_project_laundry/Multi-GNN
+                startedAt: "2026-07-23T19:39:32.304832Z"
+                writerId: 7003ko5pn469104z707r0lw4x943om33
+        m: []
+        python_version: 3.9.25
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+                - 77
+            "2":
+                - 1
+                - 5
+                - 53
+                - 77
+            "3":
+                - 2
+                - 16
+                - 61
+            "4": 3.9.25
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": darwin-arm64
+batch_size:
+    value: 8192
+data:
+    value: Small_HI
+dropout:
+    value: 0.00983468338330501
+epochs:
+    value: 1
+final_dropout:
+    value: 0.10527690625126304
+loss:
+    value: ce
+lr:
+    value: 0.006213266113989207
+model:
+    value: gin
+n_gnn_layers:
+    value: 2
+n_heads:
+    value: null
+n_hidden:
+    value: 66.00315515631006
+num_neighbors:
+    value:
+        - 100
+        - 100
+w_ce1:
+    value: 1.0000182882773443
+w_ce2:
+    value: 6.275014431494497

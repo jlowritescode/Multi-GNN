@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 207, in train_gnn
+    sample_batch = next(iter(tr_loader))
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch/utils/data/_utils/fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch_geometric/loader/link_loader.py", line 211, in collate_fn
+    out = self.link_sampler.sample_from_edges(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch_geometric/sampler/neighbor_sampler.py", line 415, in sample_from_edges
+    out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch_geometric/sampler/neighbor_sampler.py", line 1013, in edge_sample
+    out = sample_fn(seed, seed_time)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch_geometric/sampler/neighbor_sampler.py", line 606, in _sample
+    raise ImportError(f"'{self.__class__.__name__}' requires "
+ImportError: 'NeighborSampler' requires either 'pyg-lib' or 'torch-sparse'

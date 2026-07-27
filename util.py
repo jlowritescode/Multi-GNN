@@ -28,6 +28,32 @@ def create_parser():
     parser.add_argument("--reverse_mp", action='store_true', help="Use reverse MP in GNN training")
     parser.add_argument("--ports", action='store_true', help="Use port numberings in GNN training")
     parser.add_argument("--tds", action='store_true', help="Use time deltas (i.e. the time between subsequent transactions) in GNN training")
+    parser.add_argument(
+        "--flow_tds",
+        action="store_true",
+        help=(
+            "Add causal cross-direction time deltas: "
+            "time since sender last received and "
+            "time since receiver last sent"
+        )
+    )
+
+    parser.add_argument(
+        "--rolling_velocity",
+        action="store_true",
+        help="Add causal rolling transaction-count features.",
+    )
+
+    parser.add_argument(
+        "--velocity_windows",
+        nargs="+",
+        type=int,
+        default=[600, 3600, 86400],
+        help=(
+            "Rolling velocity windows in seconds. "
+            "Default: 600 3600 86400."
+        ),
+    )
     parser.add_argument("--ego", action='store_true', help="Use ego IDs in GNN training")
 
     #Model parameters

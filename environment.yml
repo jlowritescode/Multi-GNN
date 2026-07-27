@@ -1,0 +1,7 @@
+name: multignn
+channels:
+  - defaults
+dependencies:
+  - pip
+  - python=3.9
+prefix: /opt/anaconda3/envs/multignn

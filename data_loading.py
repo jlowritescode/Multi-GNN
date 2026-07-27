@@ -3,7 +3,14 @@ import numpy as np
 import torch
 import logging
 import itertools
-from data_util import GraphData, HeteroData, z_norm, create_hetero_obj
+from data_util import (
+    GraphData,
+    HeteroData,
+    z_norm,
+    create_hetero_obj,
+    rolling_transaction_velocity,
+    rolling_velocity_feature_names,
+)
 
 def get_data(args, data_config):
     '''Loads the AML transaction data.
@@ -38,6 +45,46 @@ def get_data(args, data_config):
     x = torch.tensor(df_nodes.loc[:, node_features].to_numpy()).float()
     edge_index = torch.LongTensor(df_edges.loc[:, ['from_id', 'to_id']].to_numpy().T)
     edge_attr = torch.tensor(df_edges.loc[:, edge_features].to_numpy()).float()
+    if args.rolling_velocity:
+        velocity_windows = tuple(args.velocity_windows)
+
+        logging.info(
+            "Start: calculating rolling transaction velocity "
+            f"for windows {velocity_windows}"
+        )
+
+        velocity_features = rolling_transaction_velocity(
+            edge_index=edge_index,
+            timestamps=timestamps,
+            num_nodes=max_n_id,
+            windows=velocity_windows,
+            log_transform=True,
+        )
+
+        velocity_names = rolling_velocity_feature_names(
+            velocity_windows
+        )
+
+        # The current RGCN implementation assumes that the final edge feature
+        # is its categorical relation type. Avoid silently moving that column.
+        if args.model == "rgcn":
+            raise ValueError(
+                "--rolling_velocity is not yet compatible with the current "
+                "RGCN edge-type representation. Use gin, gat, or pna, or "
+                "store RGCN edge types separately from edge_attr."
+            )
+
+        edge_attr = torch.cat(
+            [edge_attr, velocity_features],
+            dim=1,
+        )
+
+        edge_features.extend(velocity_names)
+
+        logging.info(
+            f"Added {len(velocity_names)} rolling velocity features: "
+            f"{velocity_names}"
+        )
 
     n_days = int(timestamps.max() / (3600 * 24) + 1)
     n_samples = y.shape[0]
@@ -118,6 +165,15 @@ def get_data(args, data_config):
         val_data.add_time_deltas()
         te_data.add_time_deltas()
         logging.info(f"Done: adding time-deltas")
+
+    if args.flow_tds:
+        logging.info("Start: adding cross-direction time deltas")
+
+        tr_data.add_cross_direction_time_deltas()
+        val_data.add_cross_direction_time_deltas()
+        te_data.add_cross_direction_time_deltas()
+
+        logging.info("Done: adding cross-direction time deltas")
     
     #Normalize data
     tr_data.x = val_data.x = te_data.x = z_norm(tr_data.x)

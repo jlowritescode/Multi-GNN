@@ -1,0 +1,70 @@
+2026-07-21 13:47:19,436 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50539, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50539, 1]                             | [50539, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50539, 66], [2, 344871], [344871, 66] | [50539, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50539, 66], [2, 344871], [344871, 66] | [50539, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50539, 66]                            | [50539, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50539, 66]                            | [50539, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50539, 66]                            | [50539, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50539, 66]                            | [50539, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py:41: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  total_loss += float(loss) * pred.numel()
+2026-07-21 13:56:27,338 [INFO ] Train F1: 0.0020
+2026-07-21 13:58:54,031 [INFO ] Validation F1: 0.0000
+2026-07-21 13:58:54,038 [INFO ] Test F1: 0.0000
+2026-07-21 14:07:36,062 [INFO ] Train F1: 0.0000
+2026-07-21 14:10:20,712 [INFO ] Validation F1: 0.0000
+2026-07-21 14:10:20,715 [INFO ] Test F1: 0.0000
+2026-07-21 14:21:01,176 [INFO ] Train F1: 0.0000
+2026-07-21 14:23:46,619 [INFO ] Validation F1: 0.0000
+2026-07-21 14:23:46,624 [INFO ] Test F1: 0.0000
+2026-07-21 14:34:02,459 [INFO ] Train F1: 0.0000
+2026-07-21 14:37:02,258 [INFO ] Validation F1: 0.0000
+2026-07-21 14:37:02,267 [INFO ] Test F1: 0.0000
+2026-07-21 14:45:34,821 [INFO ] Train F1: 0.0008
+2026-07-21 14:47:55,877 [INFO ] Validation F1: 0.0000
+2026-07-21 14:47:55,884 [INFO ] Test F1: 0.0000
+2026-07-21 14:55:06,834 [INFO ] Train F1: 0.1071
+2026-07-21 14:57:40,991 [INFO ] Validation F1: 0.1952
+2026-07-21 14:57:40,997 [INFO ] Test F1: 0.2979
+2026-07-21 15:05:06,389 [INFO ] Train F1: 0.1870
+2026-07-21 15:07:49,558 [INFO ] Validation F1: 0.2026
+2026-07-21 15:07:49,565 [INFO ] Test F1: 0.3186
+2026-07-21 15:15:51,880 [INFO ] Train F1: 0.2191
+2026-07-21 15:18:23,745 [INFO ] Validation F1: 0.1844
+2026-07-21 15:18:23,750 [INFO ] Test F1: 0.2322
+2026-07-21 15:25:53,033 [INFO ] Train F1: 0.2573
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 235, in train_gnn
+    model = train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 52, in train_homo
+    te_f1 = evaluate_homo(te_loader, te_inds, model, te_data, device, args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/multignn/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/train_util.py", line 111, in evaluate_homo
+    missing = ~torch.isin(batch_edge_ids, batch.edge_attr[:, 0].detach().cpu())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
