@@ -96,98 +96,452 @@ def get_loaders(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, transfor
     return tr_loader, val_loader, te_loader
 
 @torch.no_grad()
-def evaluate_homo(loader, inds, model, data, device, args):
-    '''Evaluates the model performane for homogenous graph data.'''
+@torch.no_grad()
+def evaluate_homo(
+    loader,
+    inds,
+    model,
+    data,
+    device,
+    args,
+    return_details=False
+):
+    """
+    Evaluates model performance for homogeneous graph data.
+
+    Normally returns only F1, preserving the repo's existing behavior.
+
+    If return_details=True, also returns:
+        - ground-truth labels
+        - predicted labels
+        - laundering probabilities
+    """
+
     preds = []
     ground_truths = []
+    scores = []
+
     for batch in tqdm.tqdm(loader, disable=not args.tqdm):
-        #select the seed edges from which the batch was created
-        inds = inds.detach().cpu()
-        batch_edge_inds = inds[batch.input_id.detach().cpu()]
-        batch_edge_ids = loader.data.edge_attr.detach().cpu()[batch_edge_inds, 0]
-        mask = torch.isin(batch.edge_attr[:, 0].detach().cpu(), batch_edge_ids)
 
-        #add the seed edges that have not been sampled to the batch
-        missing = ~torch.isin(batch_edge_ids, batch.edge_attr[:, 0].detach().cpu())
+        # Select the seed edges from which the batch was created
+        inds_cpu = inds.detach().cpu()
 
-        if missing.sum() != 0 and (args.data == 'Small_J' or args.data == 'Small_Q'):
+        batch_edge_inds = inds_cpu[
+            batch.input_id.detach().cpu()
+        ]
+
+        batch_edge_ids = (
+            loader.data.edge_attr
+            .detach()
+            .cpu()[batch_edge_inds, 0]
+        )
+
+        mask = torch.isin(
+            batch.edge_attr[:, 0].detach().cpu(),
+            batch_edge_ids
+        )
+
+        # Add seed edges that were not sampled into the batch
+        missing = ~torch.isin(
+            batch_edge_ids,
+            batch.edge_attr[:, 0].detach().cpu()
+        )
+
+        if (
+            missing.sum() != 0
+            and (args.data == 'Small_J' or args.data == 'Small_Q')
+        ):
+
             missing_ids = batch_edge_ids[missing].int()
+
             n_ids = batch.n_id
-            add_edge_index = data.edge_index[:, missing_ids].detach().clone()
-            node_mapping = {value.item(): idx for idx, value in enumerate(n_ids)}
-            add_edge_index = torch.tensor([[node_mapping[val.item()] for val in row] for row in add_edge_index])
-            add_edge_attr = data.edge_attr[missing_ids, :].detach().clone()
-            add_y = data.y[missing_ids].detach().clone()
-        
-            batch.edge_index = torch.cat((batch.edge_index, add_edge_index), 1)
-            batch.edge_attr = torch.cat((batch.edge_attr, add_edge_attr), 0)
-            batch.y = torch.cat((batch.y, add_y), 0)
 
-            mask = torch.cat((mask, torch.ones(add_y.shape[0], dtype=torch.bool)))
+            add_edge_index = (
+                data.edge_index[:, missing_ids]
+                .detach()
+                .clone()
+            )
 
-        #remove the unique edge id from the edge features, as it's no longer needed
+            node_mapping = {
+                value.item(): idx
+                for idx, value in enumerate(n_ids)
+            }
+
+            add_edge_index = torch.tensor([
+                [
+                    node_mapping[val.item()]
+                    for val in row
+                ]
+                for row in add_edge_index
+            ])
+
+            add_edge_attr = (
+                data.edge_attr[missing_ids, :]
+                .detach()
+                .clone()
+            )
+
+            add_y = (
+                data.y[missing_ids]
+                .detach()
+                .clone()
+            )
+
+            batch.edge_index = torch.cat(
+                (batch.edge_index, add_edge_index),
+                1
+            )
+
+            batch.edge_attr = torch.cat(
+                (batch.edge_attr, add_edge_attr),
+                0
+            )
+
+            batch.y = torch.cat(
+                (batch.y, add_y),
+                0
+            )
+
+            mask = torch.cat(
+                (
+                    mask,
+                    torch.ones(
+                        add_y.shape[0],
+                        dtype=torch.bool
+                    )
+                )
+            )
+
+        # Remove unique edge ID
         batch.edge_attr = batch.edge_attr[:, 1:]
-        
-        with torch.no_grad():
-            batch.to(device)
-            out = model(batch.x, batch.edge_index, batch.edge_attr)
-            out = out[mask]
-            pred = out.argmax(dim=-1)
-            preds.append(pred)
-            ground_truths.append(batch.y[mask])
-    pred = torch.cat(preds, dim=0).cpu().numpy()
-    ground_truth = torch.cat(ground_truths, dim=0).cpu().numpy()
-    f1 = f1_score(ground_truth, pred)
 
-    return f1
+        batch.to(device)
+
+        out = model(
+            batch.x,
+            batch.edge_index,
+            batch.edge_attr
+        )
+
+        # Move mask to same device as model output
+        mask = mask.to(out.device)
+
+        out = out[mask]
+
+        # Standard class prediction
+        pred = out.argmax(dim=-1)
+
+        # Probability of laundering class = class 1
+        probability = torch.softmax(
+            out,
+            dim=-1
+        )[:, 1]
+
+        preds.append(pred)
+        scores.append(probability)
+        ground_truths.append(batch.y[mask])
+
+    pred = (
+        torch.cat(preds, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    ground_truth = (
+        torch.cat(ground_truths, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    score = (
+        torch.cat(scores, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    f1 = f1_score(
+        ground_truth,
+        pred,
+        zero_division=0
+    )
+
+    # Existing training behavior
+    if not return_details:
+        return f1
+
+    # Extra information needed for final reporting
+    return {
+        "f1": f1,
+        "y_true": ground_truth,
+        "y_pred": pred,
+        "y_score": score
+    }
 
 @torch.no_grad()
-def evaluate_hetero(loader, inds, model, data, device, args):
-    '''Evaluates the model performane for heterogenous graph data.'''
+def evaluate_hetero(
+    loader,
+    inds,
+    model,
+    data,
+    device,
+    args,
+    return_details=False
+):
+    """
+    Evaluates model performance for heterogeneous graph data.
+
+    Normally returns only F1.
+
+    If return_details=True, also returns ground truth,
+    predictions, and laundering probabilities.
+    """
+
     preds = []
     ground_truths = []
+    scores = []
+
     for batch in tqdm.tqdm(loader, disable=not args.tqdm):
-        #select the seed edges from which the batch was created
-        inds = inds.detach().cpu()
-        batch_edge_inds = inds[batch['node', 'to', 'node'].input_id.detach().cpu()]
-        batch_edge_ids = loader.data['node', 'to', 'node'].edge_attr.detach().cpu()[batch_edge_inds, 0]
-        mask = torch.isin(batch['node', 'to', 'node'].edge_attr[:, 0].detach().cpu(), batch_edge_ids)
 
-        #add the seed edges that have not been sampled to the batch
-        missing = ~torch.isin(batch_edge_ids, batch['node', 'to', 'node'].edge_attr[:, 0].detach().cpu())
+        # Select the seed edges from which the batch was created
+        inds_cpu = inds.detach().cpu()
 
-        if missing.sum() != 0 and (args.data == 'Small_J' or args.data == 'Small_Q'):
+        batch_edge_inds = inds_cpu[
+            batch[
+                'node',
+                'to',
+                'node'
+            ].input_id.detach().cpu()
+        ]
+
+        batch_edge_ids = (
+            loader.data[
+                'node',
+                'to',
+                'node'
+            ].edge_attr
+            .detach()
+            .cpu()[batch_edge_inds, 0]
+        )
+
+        mask = torch.isin(
+            batch[
+                'node',
+                'to',
+                'node'
+            ].edge_attr[:, 0].detach().cpu(),
+            batch_edge_ids
+        )
+
+        # Add seed edges that were not sampled
+        missing = ~torch.isin(
+            batch_edge_ids,
+            batch[
+                'node',
+                'to',
+                'node'
+            ].edge_attr[:, 0].detach().cpu()
+        )
+
+        if (
+            missing.sum() != 0
+            and (args.data == 'Small_J' or args.data == 'Small_Q')
+        ):
+
             missing_ids = batch_edge_ids[missing].int()
+
             n_ids = batch['node'].n_id
-            add_edge_index = data['node', 'to', 'node'].edge_index[:, missing_ids].detach().clone()
-            node_mapping = {value.item(): idx for idx, value in enumerate(n_ids)}
-            add_edge_index = torch.tensor([[node_mapping[val.item()] for val in row] for row in add_edge_index])
-            add_edge_attr = data['node', 'to', 'node'].edge_attr[missing_ids, :].detach().clone()
-            add_y = data['node', 'to', 'node'].y[missing_ids].detach().clone()
-        
-            batch['node', 'to', 'node'].edge_index = torch.cat((batch['node', 'to', 'node'].edge_index, add_edge_index), 1)
-            batch['node', 'to', 'node'].edge_attr = torch.cat((batch['node', 'to', 'node'].edge_attr, add_edge_attr), 0)
-            batch['node', 'to', 'node'].y = torch.cat((batch['node', 'to', 'node'].y, add_y), 0)
 
-            mask = torch.cat((mask, torch.ones(add_y.shape[0], dtype=torch.bool)))
+            add_edge_index = (
+                data[
+                    'node',
+                    'to',
+                    'node'
+                ].edge_index[:, missing_ids]
+                .detach()
+                .clone()
+            )
 
-        #remove the unique edge id from the edge features, as it's no longer needed
-        batch['node', 'to', 'node'].edge_attr = batch['node', 'to', 'node'].edge_attr[:, 1:]
-        batch['node', 'rev_to', 'node'].edge_attr = batch['node', 'rev_to', 'node'].edge_attr[:, 1:]
-        
-        with torch.no_grad():
-            batch.to(device)
-            out = model(batch.x_dict, batch.edge_index_dict, batch.edge_attr_dict)
-            out = out[('node', 'to', 'node')]
-            out = out[mask]
-            pred = out.argmax(dim=-1)
-            preds.append(pred)
-            ground_truths.append(batch['node', 'to', 'node'].y[mask])
-    pred = torch.cat(preds, dim=0).cpu().numpy()
-    ground_truth = torch.cat(ground_truths, dim=0).cpu().numpy()
-    f1 = f1_score(ground_truth, pred)
+            node_mapping = {
+                value.item(): idx
+                for idx, value in enumerate(n_ids)
+            }
 
-    return f1
+            add_edge_index = torch.tensor([
+                [
+                    node_mapping[val.item()]
+                    for val in row
+                ]
+                for row in add_edge_index
+            ])
+
+            add_edge_attr = (
+                data[
+                    'node',
+                    'to',
+                    'node'
+                ].edge_attr[missing_ids, :]
+                .detach()
+                .clone()
+            )
+
+            add_y = (
+                data[
+                    'node',
+                    'to',
+                    'node'
+                ].y[missing_ids]
+                .detach()
+                .clone()
+            )
+
+            batch[
+                'node',
+                'to',
+                'node'
+            ].edge_index = torch.cat(
+                (
+                    batch[
+                        'node',
+                        'to',
+                        'node'
+                    ].edge_index,
+                    add_edge_index
+                ),
+                1
+            )
+
+            batch[
+                'node',
+                'to',
+                'node'
+            ].edge_attr = torch.cat(
+                (
+                    batch[
+                        'node',
+                        'to',
+                        'node'
+                    ].edge_attr,
+                    add_edge_attr
+                ),
+                0
+            )
+
+            batch[
+                'node',
+                'to',
+                'node'
+            ].y = torch.cat(
+                (
+                    batch[
+                        'node',
+                        'to',
+                        'node'
+                    ].y,
+                    add_y
+                ),
+                0
+            )
+
+            mask = torch.cat(
+                (
+                    mask,
+                    torch.ones(
+                        add_y.shape[0],
+                        dtype=torch.bool
+                    )
+                )
+            )
+
+        # Remove unique edge IDs
+        batch[
+            'node',
+            'to',
+            'node'
+        ].edge_attr = batch[
+            'node',
+            'to',
+            'node'
+        ].edge_attr[:, 1:]
+
+        batch[
+            'node',
+            'rev_to',
+            'node'
+        ].edge_attr = batch[
+            'node',
+            'rev_to',
+            'node'
+        ].edge_attr[:, 1:]
+
+        batch.to(device)
+
+        out = model(
+            batch.x_dict,
+            batch.edge_index_dict,
+            batch.edge_attr_dict
+        )
+
+        out = out[
+            ('node', 'to', 'node')
+        ]
+
+        # Move mask to same device
+        mask = mask.to(out.device)
+
+        out = out[mask]
+
+        pred = out.argmax(dim=-1)
+
+        # Probability of laundering class
+        probability = torch.softmax(
+            out,
+            dim=-1
+        )[:, 1]
+
+        preds.append(pred)
+        scores.append(probability)
+
+        ground_truths.append(
+            batch[
+                'node',
+                'to',
+                'node'
+            ].y[mask]
+        )
+
+    pred = (
+        torch.cat(preds, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    ground_truth = (
+        torch.cat(ground_truths, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    score = (
+        torch.cat(scores, dim=0)
+        .cpu()
+        .numpy()
+    )
+
+    f1 = f1_score(
+        ground_truth,
+        pred,
+        zero_division=0
+    )
+
+    if not return_details:
+        return f1
+
+    return {
+        "f1": f1,
+        "y_true": ground_truth,
+        "y_pred": pred,
+        "y_score": score
+    }
 
 def save_model(model, optimizer, epoch, args, data_config):
     # Save the model in a dictionary

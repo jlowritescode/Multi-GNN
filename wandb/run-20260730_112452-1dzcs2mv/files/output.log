@@ -1,0 +1,70 @@
+2026-07-30 11:25:19,470 [INFO ] +------------------------------------------+-------------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                               | Output Shape   | #Param   |
+|------------------------------------------+-------------------------------------------+----------------+----------|
+| GraphModule                              |                                           |                | 147,228  |
+| ├─(node_emb)ModuleDict                   | --                                        | --             | 198      |
+| │    └─(node)Linear                      | [258511, 2]                               | [258511, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                        | --             | 924      |
+| │    └─(node__to__node)Linear            | [1310013, 6]                              | [1310013, 66]  | 462      |
+| │    └─(node__rev_to__node)Linear        | [1753119, 6]                              | [1753119, 66]  | 462      |
+| ├─(convs)ModuleList                      | --                                        | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                        | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [258511, 66], [2, 1310013], [1310013, 66] | [258511, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [258511, 66], [2, 1753119], [1753119, 66] | [258511, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                        | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [258511, 66], [2, 1310013], [1310013, 66] | [258511, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [258511, 66], [2, 1753119], [1753119, 66] | [258511, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                        | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                        | --             | 132      |
+| │    │    └─(node)BatchNorm              | [258511, 66]                              | [258511, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                        | --             | 132      |
+| │    │    └─(node)BatchNorm              | [258511, 66]                              | [258511, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                        | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                        | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                        | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                        | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                        | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                        | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                        | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                        | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                        | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                        | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                        | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [1310013, 198]                            | [1310013, 50]  | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [1753119, 198]                            | [1753119, 50]  | 9,950    |
+| │    └─(1)ModuleDict                     | --                                        | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [1310013, 50]                             | [1310013, 50]  | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [1753119, 50]                             | [1753119, 50]  | --       |
+| │    └─(2)ModuleDict                     | --                                        | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [1310013, 50]                             | [1310013, 50]  | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [1753119, 50]                             | [1753119, 50]  | --       |
+| │    └─(3)ModuleDict                     | --                                        | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [1310013, 50]                             | [1310013, 25]  | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [1753119, 50]                             | [1753119, 25]  | 1,275    |
+| │    └─(4)ModuleDict                     | --                                        | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [1310013, 25]                             | [1310013, 25]  | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [1753119, 25]                             | [1753119, 25]  | --       |
+| │    └─(5)ModuleDict                     | --                                        | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [1310013, 25]                             | [1310013, 25]  | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [1753119, 25]                             | [1753119, 25]  | --       |
+| │    └─(6)ModuleDict                     | --                                        | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [1310013, 25]                             | [1310013, 2]   | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [1753119, 25]                             | [1753119, 2]   | 52       |
++------------------------------------------+-------------------------------------------+----------------+----------+
+[34m[1mwandb[0m: [33mWARNING[0m Fatal error while uploading data. Some run data will not be synced, but it will still be written to disk. Use `wandb sync` at the end of the run to try uploading.
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 233, in train_gnn
+    model = train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 97, in train_hetero
+    loss.backward()
+  File "/opt/anaconda3/envs/multignn-restored/lib/python3.9/site-packages/torch/_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "/opt/anaconda3/envs/multignn-restored/lib/python3.9/site-packages/torch/autograd/__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "/opt/anaconda3/envs/multignn-restored/lib/python3.9/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

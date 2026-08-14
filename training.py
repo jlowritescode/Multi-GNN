@@ -8,6 +8,497 @@ from torch_geometric.nn import to_hetero, summary
 from torch_geometric.utils import degree
 import wandb
 import logging
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from pathlib import Path
+from datetime import datetime
+
+from sklearn.metrics import (
+    f1_score,
+    precision_score,
+    recall_score,
+    average_precision_score,
+    precision_recall_curve
+)
+
+def final_test_report(metrics, args):
+    """
+    Generate and save final test-set classification results.
+
+    Outputs:
+      1. Final default-threshold metrics
+      2. Metrics at thresholds 0.05 through 0.95
+      3. Confusion counts at every threshold
+      4. CSV threshold table
+      5. Continuous precision-recall curve
+      6. Precision/Recall/F1 vs threshold graph
+      7. W&B results
+    """
+
+    y_true = metrics["y_true"]
+    y_pred = metrics["y_pred"]
+    y_score = metrics["y_score"]
+
+    # ============================================================
+    # DEFAULT MODEL RESULTS
+    # ============================================================
+
+    default_precision = precision_score(
+        y_true,
+        y_pred,
+        zero_division=0
+    )
+
+    default_recall = recall_score(
+        y_true,
+        y_pred,
+        zero_division=0
+    )
+
+    default_f1 = f1_score(
+        y_true,
+        y_pred,
+        zero_division=0
+    )
+
+    average_precision = average_precision_score(
+        y_true,
+        y_score
+    )
+
+    print("\n")
+    print("=" * 65)
+    print("FINAL TEST RESULTS")
+    print("=" * 65)
+
+    print(
+        f"Precision:          "
+        f"{default_precision:.4f}"
+    )
+
+    print(
+        f"Recall:             "
+        f"{default_recall:.4f}"
+    )
+
+    print(
+        f"F1 Score:           "
+        f"{default_f1:.4f}"
+    )
+
+    print(
+        f"Average Precision:  "
+        f"{average_precision:.4f}"
+    )
+
+    print("=" * 65)
+
+    logging.info(
+        "FINAL TEST RESULTS -- "
+        f"Precision: {default_precision:.4f}, "
+        f"Recall: {default_recall:.4f}, "
+        f"F1: {default_f1:.4f}, "
+        f"Average Precision: {average_precision:.4f}"
+    )
+
+    # ============================================================
+    # CREATE UNIQUE DIRECTORY FOR THIS RUN
+    # ============================================================
+
+    timestamp = datetime.now().strftime(
+        "%Y%m%d_%H%M%S"
+    )
+
+    adaptations = []
+
+    if args.emlps:
+        adaptations.append("emlps")
+
+    if args.reverse_mp:
+        adaptations.append("reversemp")
+
+    if args.ego:
+        adaptations.append("ego")
+
+    if args.ports:
+        adaptations.append("ports")
+
+    if args.tds:
+        adaptations.append("tds")
+
+    model_name = f"{args.data}_{args.model}"
+
+    if adaptations:
+        model_name += "_" + "_".join(adaptations)
+
+    run_name = (
+        f"{model_name}"
+        f"_seed{args.seed}"
+        f"_{timestamp}"
+    )
+
+    output_dir = Path("results") / run_name
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    # ============================================================
+    # FIXED THRESHOLDS: .05 INCREMENTS
+    # ============================================================
+
+    thresholds = np.arange(
+        0.05,
+        1.00,
+        0.05
+    )
+
+    threshold_results = []
+
+    for threshold in thresholds:
+
+        # Anything >= threshold becomes laundering
+        threshold_pred = (
+            y_score >= threshold
+        ).astype(int)
+
+        precision = precision_score(
+            y_true,
+            threshold_pred,
+            zero_division=0
+        )
+
+        recall = recall_score(
+            y_true,
+            threshold_pred,
+            zero_division=0
+        )
+
+        f1 = f1_score(
+            y_true,
+            threshold_pred,
+            zero_division=0
+        )
+
+        # Confusion-matrix components
+        tp = int(
+            np.sum(
+                (y_true == 1)
+                & (threshold_pred == 1)
+            )
+        )
+
+        fp = int(
+            np.sum(
+                (y_true == 0)
+                & (threshold_pred == 1)
+            )
+        )
+
+        tn = int(
+            np.sum(
+                (y_true == 0)
+                & (threshold_pred == 0)
+            )
+        )
+
+        fn = int(
+            np.sum(
+                (y_true == 1)
+                & (threshold_pred == 0)
+            )
+        )
+
+        predicted_laundering = (
+            tp + fp
+        )
+
+        actual_laundering = (
+            tp + fn
+        )
+
+        threshold_results.append({
+            "threshold": round(
+                float(threshold),
+                2
+            ),
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+            "true_positives": tp,
+            "false_positives": fp,
+            "true_negatives": tn,
+            "false_negatives": fn,
+            "predicted_laundering": predicted_laundering,
+            "actual_laundering": actual_laundering
+        })
+
+    threshold_df = pd.DataFrame(
+        threshold_results
+    )
+
+    # ============================================================
+    # PRINT THRESHOLD TABLE
+    # ============================================================
+
+    print("\n")
+    print("=" * 90)
+    print("TEST RESULTS BY CLASSIFICATION THRESHOLD")
+    print("=" * 90)
+
+    print(
+        threshold_df[
+            [
+                "threshold",
+                "precision",
+                "recall",
+                "f1",
+                "true_positives",
+                "false_positives",
+                "false_negatives"
+            ]
+        ].to_string(
+            index=False,
+            float_format=lambda x: f"{x:.4f}"
+        )
+    )
+
+    print("=" * 90)
+
+    # ============================================================
+    # SAVE THRESHOLD CSV
+    # ============================================================
+
+    threshold_csv_path = (
+        output_dir
+        / "test_threshold_metrics.csv"
+    )
+
+    threshold_df.to_csv(
+        threshold_csv_path,
+        index=False
+    )
+
+    # ============================================================
+    # SAVE DEFAULT FINAL METRICS
+    # ============================================================
+
+    final_metrics_df = pd.DataFrame(
+        [{
+            "precision": default_precision,
+            "recall": default_recall,
+            "f1": default_f1,
+            "average_precision": average_precision
+        }]
+    )
+
+    final_metrics_path = (
+        output_dir
+        / "final_test_metrics.csv"
+    )
+
+    final_metrics_df.to_csv(
+        final_metrics_path,
+        index=False
+    )
+
+    # ============================================================
+    # CONTINUOUS PRECISION-RECALL CURVE
+    # ============================================================
+
+    (
+        curve_precision,
+        curve_recall,
+        curve_thresholds
+    ) = precision_recall_curve(
+        y_true,
+        y_score
+    )
+
+    plt.figure(
+        figsize=(8, 6)
+    )
+
+    plt.plot(
+        curve_recall,
+        curve_precision,
+        linewidth=2
+    )
+
+    plt.xlabel(
+        "Recall"
+    )
+
+    plt.ylabel(
+        "Precision"
+    )
+
+    plt.title(
+        "Test Precision-Recall Curve\n"
+        f"Average Precision = "
+        f"{average_precision:.4f}"
+    )
+
+    plt.grid(
+        alpha=0.3
+    )
+
+    plt.tight_layout()
+
+    pr_curve_path = (
+        output_dir
+        / "precision_recall_curve.png"
+    )
+
+    plt.savefig(
+        pr_curve_path,
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.close()
+
+    # ============================================================
+    # FIXED THRESHOLD METRICS GRAPH
+    # ============================================================
+
+    plt.figure(
+        figsize=(9, 6)
+    )
+
+    plt.plot(
+        threshold_df["threshold"],
+        threshold_df["precision"],
+        marker="o",
+        label="Precision"
+    )
+
+    plt.plot(
+        threshold_df["threshold"],
+        threshold_df["recall"],
+        marker="o",
+        label="Recall"
+    )
+
+    plt.plot(
+        threshold_df["threshold"],
+        threshold_df["f1"],
+        marker="o",
+        label="F1"
+    )
+
+    plt.xlabel(
+        "Laundering Classification Threshold"
+    )
+
+    plt.ylabel(
+        "Score"
+    )
+
+    plt.title(
+        "Test Precision, Recall, and F1 "
+        "by Classification Threshold"
+    )
+
+    plt.xticks(
+        thresholds,
+        rotation=45
+    )
+
+    plt.ylim(
+        0,
+        1.05
+    )
+
+    plt.grid(
+        alpha=0.3
+    )
+
+    plt.legend()
+
+    plt.tight_layout()
+
+    threshold_plot_path = (
+        output_dir
+        / "precision_recall_f1_by_threshold.png"
+    )
+
+    plt.savefig(
+        threshold_plot_path,
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.close()
+
+    # ============================================================
+    # WANDB
+    # ============================================================
+
+    if not args.testing:
+
+        wandb.log({
+            "final_test/precision":
+                default_precision,
+
+            "final_test/recall":
+                default_recall,
+
+            "final_test/f1":
+                default_f1,
+
+            "final_test/average_precision":
+                average_precision,
+
+            "final_test/pr_curve":
+                wandb.Image(
+                    str(pr_curve_path)
+                ),
+
+            "final_test/threshold_metrics":
+                wandb.Image(
+                    str(threshold_plot_path)
+                )
+        })
+
+        # Upload threshold table to W&B
+        wandb.log({
+            "final_test/threshold_table":
+                wandb.Table(
+                    dataframe=threshold_df
+                )
+        })
+
+    # ============================================================
+    # PRINT SAVED FILE LOCATIONS
+    # ============================================================
+
+    print("\nFINAL TEST FILES SAVED:")
+
+    print(
+        f"  Metrics: "
+        f"{final_metrics_path}"
+    )
+
+    print(
+        f"  Threshold table: "
+        f"{threshold_csv_path}"
+    )
+
+    print(
+        f"  PR curve: "
+        f"{pr_curve_path}"
+    )
+
+    print(
+        f"  Threshold graph: "
+        f"{threshold_plot_path}"
+    )
+
+    print()
 
 def train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config):
     #training
@@ -63,7 +554,25 @@ def train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, mod
             wandb.log({"best_test_f1": te_f1}, step=epoch)
             if args.save_model:
                 save_model(model, optimizer, epoch, args, data_config)
-    
+    # ========================================================
+    # FINAL TEST EVALUATION
+    # ========================================================
+
+    final_metrics = evaluate_homo(
+        te_loader,
+        te_inds,
+        model,
+        te_data,
+        device,
+        args,
+        return_details=True
+    )
+
+    final_test_report(
+        final_metrics,
+        args
+    )
+
     return model
 
 def train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config):
@@ -123,6 +632,25 @@ def train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, m
             if args.save_model:
                 save_model(model, optimizer, epoch, args, data_config)
         
+    # ========================================================
+    # FINAL TEST EVALUATION
+    # ========================================================
+
+    final_metrics = evaluate_hetero(
+        te_loader,
+        te_inds,
+        model,
+        te_data,
+        device,
+        args,
+        return_details=True
+    )
+
+    final_test_report(
+        final_metrics,
+        args
+    )
+
     return model
 
 def get_model(sample_batch, config, args):

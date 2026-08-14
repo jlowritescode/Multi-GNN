@@ -1,0 +1,21 @@
+2026-07-30 11:24:52,875 INFO    MainThread:30018 [wandb_setup.py:_flush():81] Current SDK version is 0.26.1
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_setup.py:_flush():81] Configure stats pid to 30018
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /Users/jonlourie/GNN_project_laundry/Multi-GNN/wandb/run-20260730_112452-1dzcs2mv/logs/debug.log
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /Users/jonlourie/GNN_project_laundry/Multi-GNN/wandb/run-20260730_112452-1dzcs2mv/logs/debug-internal.log
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_init.py:init():850] calling init triggers
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_init.py:init():855] wandb.init called with sweep_config: {}
+config: {'epochs': 100, 'batch_size': 8192, 'model': 'gin', 'data': 'Medium_HI', 'num_neighbors': [100, 100], 'lr': 0.006213266113989207, 'n_hidden': 66.00315515631006, 'n_gnn_layers': 2, 'loss': 'ce', 'w_ce1': 1.0000182882773443, 'w_ce2': 6.275014431494497, 'dropout': 0.00983468338330501, 'final_dropout': 0.10527690625126304, 'n_heads': None, '_wandb': {}}
+2026-07-30 11:24:52,876 INFO    MainThread:30018 [wandb_init.py:init():898] starting backend
+2026-07-30 11:24:54,431 INFO    MainThread:30018 [wandb_init.py:init():913] sending inform_init request
+2026-07-30 11:24:55,609 INFO    MainThread:30018 [wandb_init.py:init():918] backend started and connected
+2026-07-30 11:24:55,843 INFO    MainThread:30018 [wandb_init.py:init():988] updated telemetry
+2026-07-30 11:24:55,888 INFO    MainThread:30018 [wandb_init.py:init():1011] communicating run to backend with 90.0 second timeout
+2026-07-30 11:24:56,434 INFO    MainThread:30018 [wandb_init.py:init():1056] starting run threads in backend
+2026-07-30 11:24:56,526 INFO    MainThread:30018 [wandb_run.py:_console_start():2554] atexit reg
+2026-07-30 11:24:56,526 INFO    MainThread:30018 [wandb_run.py:_redirect():2403] redirect: wrap_raw
+2026-07-30 11:24:56,526 INFO    MainThread:30018 [wandb_run.py:_redirect():2472] Wrapping output streams.
+2026-07-30 11:24:56,527 INFO    MainThread:30018 [wandb_run.py:_redirect():2495] Redirects installed.
+2026-07-30 11:24:56,529 INFO    MainThread:30018 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-04 12:11:47,502 INFO    wandb-AsyncioManager-main:30018 [service_client.py:_forward_responses():134] Reached EOF.
+2026-08-04 12:11:47,516 INFO    wandb-AsyncioManager-main:30018 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.
