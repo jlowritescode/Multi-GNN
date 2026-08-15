@@ -1,0 +1,66 @@
+2026-08-15 15:44:12,087 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50540, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50540, 1]                             | [50540, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+2026-08-15 15:52:04,728 [INFO ] Train F1: 0.0008
+2026-08-15 15:54:47,430 [INFO ] Validation F1: 0.0000
+2026-08-15 15:54:47,439 [INFO ] Test F1: 0.0000
+2026-08-15 16:03:25,910 [INFO ] Train F1: 0.0000
+2026-08-15 16:06:05,779 [INFO ] Validation F1: 0.0000
+2026-08-15 16:06:05,786 [INFO ] Test F1: 0.0000
+2026-08-15 16:14:24,689 [INFO ] Train F1: 0.0000
+2026-08-15 16:17:04,201 [INFO ] Validation F1: 0.0000
+2026-08-15 16:17:04,207 [INFO ] Test F1: 0.0000
+2026-08-15 16:25:15,037 [INFO ] Train F1: 0.0683
+2026-08-15 16:27:55,217 [INFO ] Validation F1: 0.1765
+2026-08-15 16:27:55,224 [INFO ] Test F1: 0.2646
+2026-08-15 16:36:59,264 [INFO ] Train F1: 0.1240
+2026-08-15 16:39:48,615 [INFO ] Validation F1: 0.1826
+2026-08-15 16:39:48,623 [INFO ] Test F1: 0.2629
+
+
+=================================================================
+FINAL TEST RESULTS
+=================================================================
+Precision:          0.2247
+Recall:             0.3215
+F1 Score:           0.2646
+Average Precision:  0.1766
+=================================================================
+2026-08-15 16:41:08,788 [INFO ] FINAL TEST RESULTS -- Precision: 0.2247, Recall: 0.3215, F1: 0.2646, Average Precision: 0.1766
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 1143, in train_gnn
+    model = train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 949, in train_homo
+    final_test_report(
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 521, in final_test_report
+    pattern_results = save_pattern_recall_reports(
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 72, in save_pattern_recall_reports
+    raise ValueError(
+ValueError:
+Pattern column was not found in formatted_transactions.csv.
+Rerun format_kaggle_files.py after adding the pattern-label preprocessing code.

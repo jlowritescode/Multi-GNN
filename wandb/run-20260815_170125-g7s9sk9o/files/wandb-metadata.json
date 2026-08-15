@@ -1,0 +1,46 @@
+{
+  "os":  "macOS-26.4.1-arm64-arm-64bit",
+  "python":  "CPython 3.9.25",
+  "startedAt":  "2026-08-15T21:01:25.967965Z",
+  "args":  [
+    "--data",
+    "Small_HI_patterns",
+    "--model",
+    "gin",
+    "--n_epochs",
+    "1"
+  ],
+  "program":  "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py",
+  "codePath":  "main.py",
+  "codePathLocal":  "main.py",
+  "git":  {
+    "remote":  "https://github.com/jlowritescode/Multi-GNN.git",
+    "commit":  "9856d2640ad3c8a18b6d6ec866c6d4c863cc7cc1"
+  },
+  "email":  "jacoblourie@gmail.com",
+  "root":  "/Users/jonlourie/GNN_project_laundry/Multi-GNN",
+  "host":  "Jons-MacBook-Pro-3.local",
+  "executable":  "/opt/anaconda3/envs/multignn-restored/bin/python",
+  "cpu_count":  10,
+  "cpu_count_logical":  10,
+  "disk":  {
+    "/":  {
+      "total":  "994662584320",
+      "used":  "879328284672"
+    }
+  },
+  "memory":  {
+    "total":  "17179869184"
+  },
+  "apple":  {
+    "name":  "Apple M1 Pro",
+    "ecpuCores":  2,
+    "pcpuCores":  8,
+    "gpuCores":  16,
+    "memoryGb":  16,
+    "swapTotalBytes":  "18253611008",
+    "ramTotalBytes":  "17179869184",
+    "macModel":  "MacBookPro18,1"
+  },
+  "writerId":  "7cce4pduyhlf4a6dwu9yqsxqpqxalc5k"
+}

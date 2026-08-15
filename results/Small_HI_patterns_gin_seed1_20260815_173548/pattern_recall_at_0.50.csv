@@ -1,0 +1,8 @@
+threshold,pattern,n_test_laundering_transactions,detected,missed,recall
+0.5,Fan-in,123,0,123,0.0
+0.5,Fan-out,131,0,131,0.0
+0.5,Cycle,99,0,99,0.0
+0.5,Scatter-Gather,239,0,239,0.0
+0.5,Gather-Scatter,381,0,381,0.0
+0.5,Bipartite,66,0,66,0.0
+0.5,None,371,0,371,0.0

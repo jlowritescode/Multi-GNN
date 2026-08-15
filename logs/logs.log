@@ -1686,3 +1686,367 @@
 2026-08-14 17:31:32,304 [INFO ] Train F1: 0.1777
 2026-08-14 17:52:49,404 [INFO ] Validation F1: 0.2235
 2026-08-14 17:52:49,405 [INFO ] Test F1: 0.2281
+2026-08-14 19:13:47,347 [INFO ] Train F1: 0.1801
+2026-08-14 19:33:50,153 [INFO ] Validation F1: 0.1655
+2026-08-14 19:33:50,154 [INFO ] Test F1: 0.2575
+2026-08-14 20:48:17,188 [INFO ] Train F1: 0.1653
+2026-08-14 21:07:26,172 [INFO ] Validation F1: 0.1460
+2026-08-14 21:07:26,173 [INFO ] Test F1: 0.1794
+2026-08-14 22:21:51,198 [INFO ] Train F1: 0.1216
+2026-08-14 22:41:13,436 [INFO ] Validation F1: 0.1561
+2026-08-14 22:41:13,437 [INFO ] Test F1: 0.2290
+2026-08-14 23:54:02,931 [INFO ] Train F1: 0.1661
+2026-08-15 00:13:05,046 [INFO ] Validation F1: 0.1313
+2026-08-15 00:13:05,046 [INFO ] Test F1: 0.1828
+2026-08-15 01:27:55,068 [INFO ] Train F1: 0.1656
+2026-08-15 01:47:58,406 [INFO ] Validation F1: 0.1279
+2026-08-15 01:47:58,407 [INFO ] Test F1: 0.2047
+2026-08-15 03:03:40,681 [INFO ] Train F1: 0.1720
+2026-08-15 03:23:39,045 [INFO ] Validation F1: 0.2257
+2026-08-15 03:23:39,046 [INFO ] Test F1: 0.2435
+2026-08-15 04:37:56,779 [INFO ] Train F1: 0.1898
+2026-08-15 04:57:00,284 [INFO ] Validation F1: 0.1832
+2026-08-15 04:57:00,286 [INFO ] Test F1: 0.2347
+2026-08-15 06:10:11,533 [INFO ] Train F1: 0.1935
+2026-08-15 06:29:20,690 [INFO ] Validation F1: 0.2133
+2026-08-15 06:29:20,691 [INFO ] Test F1: 0.2095
+2026-08-15 06:29:45,163 [INFO ] Random seed set as 1
+2026-08-15 06:29:45,163 [INFO ] Retrieving data
+2026-08-15 06:29:47,917 [INFO ] Available Edge Features: ['Unnamed: 0', 'EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering']
+2026-08-15 06:30:13,073 [INFO ] Illicit ratio = 3565 / 6924049 = 0.05%
+2026-08-15 06:30:13,074 [INFO ] Number of nodes (holdings doing transcations) = 705907
+2026-08-15 06:30:13,074 [INFO ] Number of transactions = 6924049
+2026-08-15 06:30:13,074 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-15 06:30:13,075 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-15 06:30:13,249 [INFO ] number of days and transactions in the data: 17 days, 6924049 transactions
+2026-08-15 06:30:13,363 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16]]
+2026-08-15 06:30:13,371 [INFO ] Total train samples: 64.02% || IR: 0.04% || Train days: [0, 1, 2, 3, 4]
+2026-08-15 06:30:13,373 [INFO ] Total val samples: 19.01% || IR: 0.06% || Val days: [6, 7]
+2026-08-15 06:30:13,375 [INFO ] Total test samples: 16.97% || IR: 0.07% || Test days: [8, 9, 10, 11, 12]
+2026-08-15 06:30:13,421 [INFO ] Start: adding ports
+2026-08-15 06:36:14,165 [INFO ] Done: adding ports
+2026-08-15 06:36:14,167 [INFO ] Start: adding cross-direction time deltas
+2026-08-15 06:36:42,103 [INFO ] Done: adding cross-direction time deltas
+2026-08-15 06:36:42,933 [INFO ] train data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[705907, 1] },
+  (node, to, node)={
+    edge_index=[2, 4432934],
+    edge_attr=[4432934, 10],
+    y=[4432934],
+    timestamps=[4432934],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 4432934],
+    edge_attr=[4432934, 10],
+  }
+)
+2026-08-15 06:36:42,933 [INFO ] validation data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[705907, 1] },
+  (node, to, node)={
+    edge_index=[2, 5749376],
+    edge_attr=[5749376, 10],
+    y=[5749376],
+    timestamps=[5749376],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 5749376],
+    edge_attr=[5749376, 10],
+  }
+)
+2026-08-15 06:36:42,933 [INFO ] test data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[705907, 1] },
+  (node, to, node)={
+    edge_index=[2, 6924049],
+    edge_attr=[6924049, 10],
+    y=[6924049],
+    timestamps=[6924049],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 6924049],
+    edge_attr=[6924049, 10],
+  }
+)
+2026-08-15 06:36:42,978 [INFO ] Retrieved data in 417.79s
+2026-08-15 06:36:42,978 [INFO ] Running Training
+2026-08-15 06:36:51,471 [INFO ] +------------------------------------------+-----------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                             | Output Shape   | #Param   |
+|------------------------------------------+-----------------------------------------+----------------+----------|
+| GraphModule                              |                                         |                | 147,756  |
+| ├─(node_emb)ModuleDict                   | --                                      | --             | 198      |
+| │    └─(node)Linear                      | [169648, 2]                             | [169648, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                      | --             | 1,452    |
+| │    └─(node__to__node)Linear            | [734579, 10]                            | [734579, 66]   | 726      |
+| │    └─(node__rev_to__node)Linear        | [952401, 10]                            | [952401, 66]   | 726      |
+| ├─(convs)ModuleList                      | --                                      | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [169648, 66], [2, 734579], [734579, 66] | [169648, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [169648, 66], [2, 952401], [952401, 66] | [169648, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [169648, 66], [2, 734579], [734579, 66] | [169648, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [169648, 66], [2, 952401], [952401, 66] | [169648, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                      | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [169648, 66]                            | [169648, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [169648, 66]                            | [169648, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                      | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                      | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [734579, 198]                           | [734579, 50]   | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [952401, 198]                           | [952401, 50]   | 9,950    |
+| │    └─(1)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [734579, 50]                            | [734579, 50]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [952401, 50]                            | [952401, 50]   | --       |
+| │    └─(2)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [734579, 50]                            | [734579, 50]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [952401, 50]                            | [952401, 50]   | --       |
+| │    └─(3)ModuleDict                     | --                                      | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [734579, 50]                            | [734579, 25]   | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [952401, 50]                            | [952401, 25]   | 1,275    |
+| │    └─(4)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [734579, 25]                            | [734579, 25]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [952401, 25]                            | [952401, 25]   | --       |
+| │    └─(5)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [734579, 25]                            | [734579, 25]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [952401, 25]                            | [952401, 25]   | --       |
+| │    └─(6)ModuleDict                     | --                                      | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [734579, 25]                            | [734579, 2]    | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [952401, 25]                            | [952401, 2]    | 52       |
++------------------------------------------+-----------------------------------------+----------------+----------+
+2026-08-15 07:51:02,192 [INFO ] Train F1: 0.0013
+2026-08-15 08:10:01,430 [INFO ] Validation F1: 0.0000
+2026-08-15 08:10:01,431 [INFO ] Test F1: 0.0000
+2026-08-15 09:26:45,983 [INFO ] Train F1: 0.0210
+2026-08-15 09:46:26,751 [INFO ] Validation F1: 0.1306
+2026-08-15 09:46:26,752 [INFO ] Test F1: 0.1434
+2026-08-15 11:03:02,862 [INFO ] Train F1: 0.0816
+2026-08-15 11:25:12,870 [INFO ] Validation F1: 0.1001
+2026-08-15 11:25:12,872 [INFO ] Test F1: 0.1822
+2026-08-15 13:05:08,002 [INFO ] Train F1: 0.1266
+2026-08-15 13:27:34,771 [INFO ] Validation F1: 0.1672
+2026-08-15 13:27:34,773 [INFO ] Test F1: 0.1983
+2026-08-15 15:12:28,653 [INFO ] Train F1: 0.1500
+2026-08-15 15:35:40,559 [INFO ] Validation F1: 0.1720
+2026-08-15 15:35:40,561 [INFO ] Test F1: 0.2998
+2026-08-15 15:43:22,745 [INFO ] Random seed set as 1
+2026-08-15 15:43:22,745 [INFO ] Retrieving data
+2026-08-15 15:43:27,106 [INFO ] Available Edge Features: ['Unnamed: 0', 'EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering']
+2026-08-15 15:44:05,112 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-15 15:44:05,160 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-15 15:44:05,160 [INFO ] Number of transactions = 5078345
+2026-08-15 15:44:05,162 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-15 15:44:05,162 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-15 15:44:07,237 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-15 15:44:07,528 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-15 15:44:07,542 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-15 15:44:07,548 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-15 15:44:07,551 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-15 15:44:08,687 [INFO ] train data object: GraphData(x=[515088, 1], edge_index=[2, 3248921], edge_attr=[3248921, 4], y=[3248921], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[3248921])
+2026-08-15 15:44:08,689 [INFO ] validation data object: GraphData(x=[515088, 1], edge_index=[2, 4214445], edge_attr=[4214445, 4], y=[4214445], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[4214445])
+2026-08-15 15:44:08,689 [INFO ] test data object: GraphData(x=[515088, 1], edge_index=[2, 5078345], edge_attr=[5078345, 4], y=[5078345], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[5078345])
+2026-08-15 15:44:08,705 [INFO ] Retrieved data in 45.96s
+2026-08-15 15:44:08,706 [INFO ] Running Training
+2026-08-15 15:44:12,087 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50540, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50540, 1]                             | [50540, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+2026-08-15 15:52:04,728 [INFO ] Train F1: 0.0008
+2026-08-15 15:54:47,430 [INFO ] Validation F1: 0.0000
+2026-08-15 15:54:47,439 [INFO ] Test F1: 0.0000
+2026-08-15 16:03:25,910 [INFO ] Train F1: 0.0000
+2026-08-15 16:06:05,779 [INFO ] Validation F1: 0.0000
+2026-08-15 16:06:05,786 [INFO ] Test F1: 0.0000
+2026-08-15 16:14:24,689 [INFO ] Train F1: 0.0000
+2026-08-15 16:17:04,201 [INFO ] Validation F1: 0.0000
+2026-08-15 16:17:04,207 [INFO ] Test F1: 0.0000
+2026-08-15 16:25:15,037 [INFO ] Train F1: 0.0683
+2026-08-15 16:27:55,217 [INFO ] Validation F1: 0.1765
+2026-08-15 16:27:55,224 [INFO ] Test F1: 0.2646
+2026-08-15 16:36:59,264 [INFO ] Train F1: 0.1240
+2026-08-15 16:39:48,615 [INFO ] Validation F1: 0.1826
+2026-08-15 16:39:48,623 [INFO ] Test F1: 0.2629
+2026-08-15 16:41:08,788 [INFO ] FINAL TEST RESULTS -- Precision: 0.2247, Recall: 0.3215, F1: 0.2646, Average Precision: 0.1766
+2026-08-15 17:00:44,117 [INFO ] Random seed set as 1
+2026-08-15 17:00:44,118 [INFO ] Retrieving data
+2026-08-15 17:00:46,695 [INFO ] Available Edge Features: ['Unnamed: 0', 'EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering']
+2026-08-15 17:01:22,792 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-15 17:01:22,831 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-15 17:01:22,832 [INFO ] Number of transactions = 5078345
+2026-08-15 17:01:22,832 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-15 17:01:22,833 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-15 17:01:24,654 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-15 17:01:24,846 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-15 17:01:24,865 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-15 17:01:24,870 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-15 17:01:24,875 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-15 17:01:25,255 [INFO ] train data object: GraphData(x=[515088, 1], edge_index=[2, 3248921], edge_attr=[3248921, 4], y=[3248921], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[3248921])
+2026-08-15 17:01:25,256 [INFO ] validation data object: GraphData(x=[515088, 1], edge_index=[2, 4214445], edge_attr=[4214445, 4], y=[4214445], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[4214445])
+2026-08-15 17:01:25,257 [INFO ] test data object: GraphData(x=[515088, 1], edge_index=[2, 5078345], edge_attr=[5078345, 4], y=[5078345], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[5078345])
+2026-08-15 17:01:25,267 [INFO ] Retrieved data in 41.15s
+2026-08-15 17:01:25,267 [INFO ] Running Training
+2026-08-15 17:01:28,521 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50540, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50540, 1]                             | [50540, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+2026-08-15 17:09:24,531 [INFO ] Train F1: 0.0008
+2026-08-15 17:11:58,633 [INFO ] Validation F1: 0.0000
+2026-08-15 17:11:58,640 [INFO ] Test F1: 0.0000
+2026-08-15 17:13:20,158 [INFO ] FINAL TEST RESULTS -- Precision: 0.0000, Recall: 0.0000, F1: 0.0000, Average Precision: 0.0384
+2026-08-15 17:22:19,259 [INFO ] Random seed set as 1
+2026-08-15 17:22:19,260 [INFO ] Retrieving data
+2026-08-15 17:22:21,298 [INFO ] Available Edge Features: ['EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering', 'Pattern']
+2026-08-15 17:23:00,540 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-15 17:23:00,545 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-15 17:23:00,545 [INFO ] Number of transactions = 5078345
+2026-08-15 17:23:00,545 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-15 17:23:00,545 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-15 17:23:01,711 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-15 17:23:02,365 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-15 17:23:02,457 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-15 17:23:02,476 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-15 17:23:02,488 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-15 17:23:03,121 [INFO ] train data object: GraphData(x=[515088, 1], edge_index=[2, 3248921], edge_attr=[3248921, 4], y=[3248921], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[3248921])
+2026-08-15 17:23:03,123 [INFO ] validation data object: GraphData(x=[515088, 1], edge_index=[2, 4214445], edge_attr=[4214445, 4], y=[4214445], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[4214445])
+2026-08-15 17:23:03,123 [INFO ] test data object: GraphData(x=[515088, 1], edge_index=[2, 5078345], edge_attr=[5078345, 4], y=[5078345], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[5078345])
+2026-08-15 17:23:03,315 [INFO ] Retrieved data in 44.05s
+2026-08-15 17:23:03,315 [INFO ] Running Training
+2026-08-15 17:23:11,821 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50540, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50540, 1]                             | [50540, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+2026-08-15 17:31:46,847 [INFO ] Train F1: 0.0008
+2026-08-15 17:34:23,161 [INFO ] Validation F1: 0.0000
+2026-08-15 17:34:23,171 [INFO ] Test F1: 0.0000
+2026-08-15 17:35:48,724 [INFO ] FINAL TEST RESULTS -- Precision: 0.0000, Recall: 0.0000, F1: 0.0000, Average Precision: 0.0437
+2026-08-15 17:36:26,877 [INFO ] Random seed set as 1
+2026-08-15 17:36:26,877 [INFO ] Retrieving data
+2026-08-15 17:36:28,941 [INFO ] Available Edge Features: ['EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering', 'Pattern']
+2026-08-15 17:37:10,598 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-15 17:37:10,608 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-15 17:37:10,610 [INFO ] Number of transactions = 5078345
+2026-08-15 17:37:10,610 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-15 17:37:10,610 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-15 17:37:12,341 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-15 17:37:12,998 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-15 17:37:13,040 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-15 17:37:13,042 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-15 17:37:13,045 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-15 17:37:13,576 [INFO ] train data object: GraphData(x=[515088, 1], edge_index=[2, 3248921], edge_attr=[3248921, 4], y=[3248921], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[3248921])
+2026-08-15 17:37:13,578 [INFO ] validation data object: GraphData(x=[515088, 1], edge_index=[2, 4214445], edge_attr=[4214445, 4], y=[4214445], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[4214445])
+2026-08-15 17:37:13,579 [INFO ] test data object: GraphData(x=[515088, 1], edge_index=[2, 5078345], edge_attr=[5078345, 4], y=[5078345], readout='edge', loss_fn='ce', num_nodes=515088, timestamps=[5078345])
+2026-08-15 17:37:13,677 [INFO ] Retrieved data in 46.80s
+2026-08-15 17:37:13,677 [INFO ] Running Training
+2026-08-15 17:37:17,213 [INFO ] +---------------------------------+----------------------------------------+----------------+----------+
+| Layer                           | Input Shape                            | Output Shape   | #Param   |
+|---------------------------------+----------------------------------------+----------------+----------|
+| GINe                            | [50540, 1], [2, 344871], [344871, 4]   | [344871, 2]    | 38,535   |
+| ├─(node_emb)Linear              | [50540, 1]                             | [50540, 66]    | 132      |
+| ├─(edge_emb)Linear              | [344871, 4]                            | [344871, 66]   | 330      |
+| ├─(convs)ModuleList             | --                                     | --             | 26,532   |
+| │    └─(0)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| │    └─(1)GINEConv              | [50540, 66], [2, 344871], [344871, 66] | [50540, 66]    | 13,266   |
+| ├─(emlps)ModuleList             | --                                     | --             | --       |
+| ├─(batch_norms)ModuleList       | --                                     | --             | 264      |
+| │    └─(0)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| │    └─(1)BatchNorm             | [50540, 66]                            | [50540, 66]    | 132      |
+| │    │    └─(module)BatchNorm1d | [50540, 66]                            | [50540, 66]    | 132      |
+| ├─(mlp)Sequential               | [344871, 198]                          | [344871, 2]    | 11,277   |
+| │    └─(0)Linear                | [344871, 198]                          | [344871, 50]   | 9,950    |
+| │    └─(1)ReLU                  | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(2)Dropout               | [344871, 50]                           | [344871, 50]   | --       |
+| │    └─(3)Linear                | [344871, 50]                           | [344871, 25]   | 1,275    |
+| │    └─(4)ReLU                  | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(5)Dropout               | [344871, 25]                           | [344871, 25]   | --       |
+| │    └─(6)Linear                | [344871, 25]                           | [344871, 2]    | 52       |
++---------------------------------+----------------------------------------+----------------+----------+
+2026-08-15 17:45:09,089 [INFO ] Train F1: 0.0008
+2026-08-15 17:47:45,873 [INFO ] Validation F1: 0.0000
+2026-08-15 17:47:45,884 [INFO ] Test F1: 0.0000
+2026-08-15 17:51:17,398 [INFO ] Train F1: 0.1513
+2026-08-15 17:57:00,084 [INFO ] Train F1: 0.0000
+2026-08-15 18:00:53,132 [INFO ] Validation F1: 0.0000
+2026-08-15 18:00:53,144 [INFO ] Test F1: 0.0000
+2026-08-15 18:13:24,241 [INFO ] Train F1: 0.0000
+2026-08-15 18:16:45,301 [INFO ] Validation F1: 0.0000
+2026-08-15 18:16:45,310 [INFO ] Test F1: 0.0000
+2026-08-15 18:26:36,745 [INFO ] Train F1: 0.0000
+2026-08-15 18:29:30,661 [INFO ] Validation F1: 0.0000
+2026-08-15 18:29:30,662 [INFO ] Test F1: 0.0000
+2026-08-15 18:32:24,012 [INFO ] Validation F1: 0.1443
+2026-08-15 18:32:24,015 [INFO ] Test F1: 0.2134
+2026-08-15 18:37:51,161 [INFO ] Train F1: 0.0433
+2026-08-15 18:40:26,531 [INFO ] Validation F1: 0.1935
+2026-08-15 18:40:26,541 [INFO ] Test F1: 0.2469
+2026-08-15 18:41:47,811 [INFO ] FINAL TEST RESULTS -- Precision: 0.2498, Recall: 0.2384, F1: 0.2440, Average Precision: 0.2377

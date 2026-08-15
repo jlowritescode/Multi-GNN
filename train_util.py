@@ -95,7 +95,7 @@ def get_loaders(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, transfor
         
     return tr_loader, val_loader, te_loader
 
-@torch.no_grad()
+
 @torch.no_grad()
 def evaluate_homo(
     loader,
@@ -120,6 +120,7 @@ def evaluate_homo(
     preds = []
     ground_truths = []
     scores = []
+    edge_ids = []
 
     for batch in tqdm.tqdm(loader, disable=not args.tqdm):
 
@@ -213,6 +214,15 @@ def evaluate_homo(
             )
 
         # Remove unique edge ID
+        # Save the IDs corresponding exactly to the evaluated edges.
+        # These IDs are aligned with out[mask].
+        current_edge_ids = (
+            batch.edge_attr[mask, 0]
+            .detach()
+            .cpu()
+        )
+
+        edge_ids.append(current_edge_ids)
         batch.edge_attr = batch.edge_attr[:, 1:]
 
         batch.to(device)
@@ -270,11 +280,19 @@ def evaluate_homo(
         return f1
 
     # Extra information needed for final reporting
+
+    edge_id = (
+        torch.cat(edge_ids, dim=0)
+        .cpu()
+        .numpy()
+        .astype(int)
+    )
     return {
         "f1": f1,
         "y_true": ground_truth,
         "y_pred": pred,
-        "y_score": score
+        "y_score": score,
+        "edge_ids": edge_id
     }
 
 @torch.no_grad()
@@ -295,10 +313,10 @@ def evaluate_hetero(
     If return_details=True, also returns ground truth,
     predictions, and laundering probabilities.
     """
-
     preds = []
     ground_truths = []
     scores = []
+    edge_ids = []
 
     for batch in tqdm.tqdm(loader, disable=not args.tqdm):
 
@@ -451,7 +469,17 @@ def evaluate_hetero(
                     )
                 )
             )
+        current_edge_ids = (
+            batch[
+                'node',
+                'to',
+                'node'
+            ].edge_attr[mask, 0]
+            .detach()
+            .cpu()
+        )
 
+        edge_ids.append(current_edge_ids)
         # Remove unique edge IDs
         batch[
             'node',
@@ -532,7 +560,12 @@ def evaluate_hetero(
         pred,
         zero_division=0
     )
-
+    edge_id = (
+        torch.cat(edge_ids, dim=0)
+        .cpu()
+        .numpy()
+        .astype(int)
+    )
     if not return_details:
         return f1
 

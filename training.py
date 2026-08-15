@@ -22,8 +22,381 @@ from sklearn.metrics import (
     average_precision_score,
     precision_recall_curve
 )
+def save_pattern_recall_reports(
+    metrics,
+    args,
+    data_config,
+    output_dir
+):
+    """
+    Calculates laundering detection recall separately
+    for each known AML pattern.
 
-def final_test_report(metrics, args):
+    Produces:
+      - paper-style 6-pattern + NONE results
+      - all-8-pattern results
+      - results at thresholds 0.05 ... 0.95
+      - 0.50 threshold summary
+      - pattern recall graph
+    """
+
+    y_true = np.asarray(
+        metrics["y_true"]
+    )
+
+    y_score = np.asarray(
+        metrics["y_score"]
+    )
+
+    edge_ids = np.asarray(
+        metrics["edge_ids"],
+        dtype=int
+    )
+
+    # ==========================================================
+    # LOAD PATTERNS FROM FORMATTED TRANSACTIONS
+    # ==========================================================
+
+    transaction_file = (
+        Path(data_config["paths"]["aml_data"])
+        / args.data
+        / "formatted_transactions.csv"
+    )
+
+    transaction_df = pd.read_csv(
+        transaction_file,
+        low_memory=False
+    )
+
+    if "Pattern" not in transaction_df.columns:
+        raise ValueError(
+            "\nPattern column was not found in "
+            "formatted_transactions.csv.\n"
+            "Rerun format_kaggle_files.py after adding "
+            "the pattern-label preprocessing code."
+        )
+
+    # edge_ids are row positions in te_data /
+    # formatted_transactions.csv
+    test_patterns = (
+        transaction_df
+        .iloc[edge_ids]["Pattern"]
+        .fillna("NONE")
+        .astype(str)
+        .str.upper()
+        .to_numpy()
+    )
+
+    if not (
+        len(test_patterns)
+        == len(y_true)
+        == len(y_score)
+    ):
+        raise ValueError(
+            "Pattern labels and model predictions "
+            "are not aligned."
+        )
+
+    # ==========================================================
+    # PATTERN DEFINITIONS
+    # ==========================================================
+
+    paper_patterns = [
+        "FAN-IN",
+        "FAN-OUT",
+        "CYCLE",
+        "SCATTER-GATHER",
+        "GATHER-SCATTER",
+        "BIPARTITE",
+        "NONE"
+    ]
+
+    all_patterns = [
+        "FAN-IN",
+        "FAN-OUT",
+        "CYCLE",
+        "SCATTER-GATHER",
+        "GATHER-SCATTER",
+        "BIPARTITE",
+        "STACK",
+        "RANDOM",
+        "NONE"
+    ]
+
+    display_names = {
+        "FAN-IN": "Fan-in",
+        "FAN-OUT": "Fan-out",
+        "CYCLE": "Cycle",
+        "SCATTER-GATHER": "Scatter-Gather",
+        "GATHER-SCATTER": "Gather-Scatter",
+        "BIPARTITE": "Bipartite",
+        "STACK": "Stack",
+        "RANDOM": "Random",
+        "NONE": "None"
+    }
+
+    thresholds = np.arange(
+        0.05,
+        1.00,
+        0.05
+    )
+
+    # ==========================================================
+    # HELPER
+    # ==========================================================
+
+    def calculate_table(pattern_list):
+
+        rows = []
+
+        for threshold in thresholds:
+
+            predictions = (
+                y_score >= threshold
+            ).astype(int)
+
+            for pattern in pattern_list:
+
+                # Only evaluate actual laundering transactions
+                # belonging to this pattern.
+                mask = (
+                    (y_true == 1)
+                    & (test_patterns == pattern)
+                )
+
+                n_transactions = int(
+                    mask.sum()
+                )
+
+                if n_transactions == 0:
+
+                    detected = 0
+                    missed = 0
+                    recall = np.nan
+
+                else:
+
+                    detected = int(
+                        predictions[mask].sum()
+                    )
+
+                    missed = (
+                        n_transactions
+                        - detected
+                    )
+
+                    recall = (
+                        detected
+                        / n_transactions
+                    )
+
+                rows.append({
+                    "threshold": round(
+                        float(threshold),
+                        2
+                    ),
+                    "pattern": display_names[pattern],
+                    "n_test_laundering_transactions":
+                        n_transactions,
+                    "detected": detected,
+                    "missed": missed,
+                    "recall": recall
+                })
+
+        return pd.DataFrame(rows)
+
+    # ==========================================================
+    # PAPER-STYLE RESULTS
+    # ==========================================================
+
+    paper_df = calculate_table(
+        paper_patterns
+    )
+
+    paper_path = (
+        output_dir
+        / "pattern_recall_by_threshold.csv"
+    )
+
+    paper_df.to_csv(
+        paper_path,
+        index=False
+    )
+
+    # ==========================================================
+    # EXPANDED ALL-8-PATTERN RESULTS
+    # ==========================================================
+
+    all_df = calculate_table(
+        all_patterns
+    )
+
+    all_path = (
+        output_dir
+        / "pattern_recall_by_threshold_all_patterns.csv"
+    )
+
+    all_df.to_csv(
+        all_path,
+        index=False
+    )
+
+    # ==========================================================
+    # 0.50 SUMMARY
+    # ==========================================================
+
+    threshold_050_df = paper_df[
+        np.isclose(
+            paper_df["threshold"],
+            0.50
+        )
+    ].copy()
+
+    threshold_050_path = (
+        output_dir
+        / "pattern_recall_at_0.50.csv"
+    )
+
+    threshold_050_df.to_csv(
+        threshold_050_path,
+        index=False
+    )
+
+    print("\n")
+    print("=" * 80)
+    print("TEST RECALL BY MONEY-LAUNDERING PATTERN @ THRESHOLD 0.50")
+    print("=" * 80)
+
+    print(
+        threshold_050_df[
+            [
+                "pattern",
+                "n_test_laundering_transactions",
+                "detected",
+                "missed",
+                "recall"
+            ]
+        ].to_string(
+            index=False,
+            float_format=lambda x: f"{x:.4f}"
+        )
+    )
+
+    print("=" * 80)
+
+    # ==========================================================
+    # GRAPH
+    # ==========================================================
+
+    plot_df = paper_df.pivot(
+        index="threshold",
+        columns="pattern",
+        values="recall"
+    )
+
+    plt.figure(
+        figsize=(10, 7)
+    )
+
+    for column in plot_df.columns:
+
+        plt.plot(
+            plot_df.index,
+            plot_df[column],
+            marker="o",
+            label=column
+        )
+
+    plt.xlabel(
+        "Laundering Classification Threshold"
+    )
+
+    plt.ylabel(
+        "Recall"
+    )
+
+    plt.title(
+        "Test Recall by Money-Laundering Pattern"
+    )
+
+    plt.xticks(
+        thresholds,
+        rotation=45
+    )
+
+    plt.ylim(
+        0,
+        1.05
+    )
+
+    plt.grid(
+        alpha=0.3
+    )
+
+    plt.legend()
+
+    plt.tight_layout()
+
+    plot_path = (
+        output_dir
+        / "pattern_recall_by_threshold.png"
+    )
+
+    plt.savefig(
+        plot_path,
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.close()
+
+    # ==========================================================
+    # WANDB
+    # ==========================================================
+
+    if not args.testing:
+
+        wandb.log({
+            "final_test/pattern_recall_plot":
+                wandb.Image(
+                    str(plot_path)
+                )
+        })
+
+        wandb.log({
+            "final_test/pattern_recall_table":
+                wandb.Table(
+                    dataframe=threshold_050_df
+                )
+        })
+
+    print("\nPATTERN RESULTS SAVED:")
+
+    print(
+        f"  Paper-style threshold results: "
+        f"{paper_path}"
+    )
+
+    print(
+        f"  All pattern results: "
+        f"{all_path}"
+    )
+
+    print(
+        f"  Pattern recall @ 0.50: "
+        f"{threshold_050_path}"
+    )
+
+    print(
+        f"  Pattern graph: "
+        f"{plot_path}"
+    )
+
+    return paper_df
+def final_test_report(
+    metrics,
+    args,
+    data_config):
     """
     Generate and save final test-set classification results.
 
@@ -145,7 +518,12 @@ def final_test_report(metrics, args):
         parents=True,
         exist_ok=True
     )
-
+    pattern_results = save_pattern_recall_reports(
+        metrics,
+        args,
+        data_config,
+        output_dir
+    )
     # ============================================================
     # FIXED THRESHOLDS: .05 INCREMENTS
     # ============================================================
@@ -570,7 +948,8 @@ def train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, mod
 
     final_test_report(
         final_metrics,
-        args
+        args,
+        data_config
     )
 
     return model
@@ -648,7 +1027,8 @@ def train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, m
 
     final_test_report(
         final_metrics,
-        args
+        args,
+        data_config
     )
 
     return model

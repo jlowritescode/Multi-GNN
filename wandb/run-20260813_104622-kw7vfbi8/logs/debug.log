@@ -17,3 +17,8 @@ config: {'epochs': 20, 'batch_size': 8192, 'model': 'gin', 'data': 'Small_LI', '
 2026-08-13 10:46:24,289 INFO    MainThread:20036 [wandb_run.py:_redirect():2472] Wrapping output streams.
 2026-08-13 10:46:24,290 INFO    MainThread:20036 [wandb_run.py:_redirect():2495] Redirects installed.
 2026-08-13 10:46:24,293 INFO    MainThread:20036 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-15 06:29:20,707 INFO    MainThread:20036 [wandb_run.py:_finish():2321] finishing run jacoblourie-university-of-maryland/your_proj_name/kw7vfbi8
+2026-08-15 06:29:20,713 INFO    MainThread:20036 [wandb_run.py:_atexit_cleanup():2520] got exitcode: 0
+2026-08-15 06:29:20,728 INFO    MainThread:20036 [wandb_run.py:_restore():2502] restore
+2026-08-15 06:29:20,729 INFO    MainThread:20036 [wandb_run.py:_restore():2508] restore done
+2026-08-15 06:29:21,644 INFO    MainThread:20036 [wandb_run.py:_footer_sync_info():3889] logging synced files
