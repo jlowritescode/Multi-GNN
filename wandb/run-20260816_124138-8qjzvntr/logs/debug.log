@@ -17,3 +17,5 @@ config: {'epochs': 20, 'batch_size': 8192, 'model': 'gin', 'data': 'Small_LI_pat
 2026-08-16 12:41:39,333 INFO    MainThread:11174 [wandb_run.py:_redirect():2472] Wrapping output streams.
 2026-08-16 12:41:39,333 INFO    MainThread:11174 [wandb_run.py:_redirect():2495] Redirects installed.
 2026-08-16 12:41:39,336 INFO    MainThread:11174 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-18 13:38:22,529 INFO    wandb-AsyncioManager-main:11174 [service_client.py:_forward_responses():134] Reached EOF.
+2026-08-18 13:38:22,532 INFO    wandb-AsyncioManager-main:11174 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.

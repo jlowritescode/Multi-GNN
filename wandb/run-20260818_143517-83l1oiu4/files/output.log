@@ -1,0 +1,82 @@
+2026-08-18 14:35:24,877 [INFO ] +------------------------------------------+-----------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                             | Output Shape   | #Param   |
+|------------------------------------------+-----------------------------------------+----------------+----------|
+| GraphModule                              |                                         |                | 147,228  |
+| ├─(node_emb)ModuleDict                   | --                                      | --             | 198      |
+| │    └─(node)Linear                      | [150179, 2]                             | [150179, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                      | --             | 924      |
+| │    └─(node__to__node)Linear            | [700658, 6]                             | [700658, 66]   | 462      |
+| │    └─(node__rev_to__node)Linear        | [886394, 6]                             | [886394, 66]   | 462      |
+| ├─(convs)ModuleList                      | --                                      | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                      | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                      | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                      | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [700658, 198]                           | [700658, 50]   | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 198]                           | [886394, 50]   | 9,950    |
+| │    └─(1)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(2)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(3)ModuleDict                     | --                                      | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [700658, 50]                            | [700658, 25]   | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 50]                            | [886394, 25]   | 1,275    |
+| │    └─(4)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(5)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(6)ModuleDict                     | --                                      | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [700658, 25]                            | [700658, 2]    | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 25]                            | [886394, 2]    | 52       |
++------------------------------------------+-----------------------------------------+----------------+----------+
+2026-08-18 15:58:11,546 [INFO ] Train F1: 0.0218
+2026-08-18 16:13:46,189 [INFO ] Validation F1: 0.2351
+2026-08-18 16:13:46,195 [INFO ] Test F1: 0.3770
+2026-08-18 16:13:46,224 [INFO ] Restored best validation model from epoch 0 (validation F1=0.2351)
+
+
+=================================================================
+FINAL TEST RESULTS
+=================================================================
+Precision:          0.3263
+Recall:             0.4432
+F1 Score:           0.3759
+Average Precision:  0.3958
+=================================================================
+2026-08-18 16:21:04,863 [INFO ] FINAL TEST RESULTS -- Precision: 0.3263, Recall: 0.4432, F1: 0.3759, Average Precision: 0.3958
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 1184, in train_gnn
+    model = train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 1071, in train_hetero
+    final_test_report(
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 521, in final_test_report
+    pattern_results = save_pattern_recall_reports(
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 95, in save_pattern_recall_reports
+    raise ValueError(
+ValueError: Pattern labels and model predictions are not aligned.

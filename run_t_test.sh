@@ -2,7 +2,7 @@
 
 set -e
 
-DATA="Small_HI"
+DATA="Small_HI_patterns"
 EPOCHS=10
 
 for SEED in 1 2 3 4 5

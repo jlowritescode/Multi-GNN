@@ -306,274 +306,205 @@ def evaluate_hetero(
     return_details=False
 ):
     """
-    Evaluates model performance for heterogeneous graph data.
+    Evaluate a model on heterogeneous graph data.
 
-    Normally returns only F1.
+    Normally returns only F1, preserving the repo's existing behavior.
 
-    If return_details=True, also returns ground truth,
-    predictions, and laundering probabilities.
+    If return_details=True, also returns:
+        - ground-truth labels
+        - predicted labels
+        - laundering probabilities
+        - original edge IDs aligned exactly with those predictions
     """
+
+    model.eval()
+
     preds = []
     ground_truths = []
     scores = []
     edge_ids = []
 
+    edge_type = ('node', 'to', 'node')
+    rev_edge_type = ('node', 'rev_to', 'node')
+
+    # inds maps positions in the LinkNeighborLoader's edge_label_index
+    # back to positions in the original graph.
+    inds_cpu = inds.detach().cpu()
+
     for batch in tqdm.tqdm(loader, disable=not args.tqdm):
 
-        # Select the seed edges from which the batch was created
-        inds_cpu = inds.detach().cpu()
-
-        batch_edge_inds = inds_cpu[
-            batch[
-                'node',
-                'to',
-                'node'
-            ].input_id.detach().cpu()
-        ]
-
-        batch_edge_ids = (
-            loader.data[
-                'node',
-                'to',
-                'node'
-            ].edge_attr
-            .detach()
-            .cpu()[batch_edge_inds, 0]
-        )
-
-        mask = torch.isin(
-            batch[
-                'node',
-                'to',
-                'node'
-            ].edge_attr[:, 0].detach().cpu(),
-            batch_edge_ids
-        )
-
-        # Add seed edges that were not sampled
-        missing = ~torch.isin(
-            batch_edge_ids,
-            batch[
-                'node',
-                'to',
-                'node'
-            ].edge_attr[:, 0].detach().cpu()
-        )
-
-        if (
-            missing.sum() != 0
-            and (args.data == 'Small_J' or args.data == 'Small_Q')
-        ):
-
-            missing_ids = batch_edge_ids[missing].int()
-
-            n_ids = batch['node'].n_id
-
-            add_edge_index = (
-                data[
-                    'node',
-                    'to',
-                    'node'
-                ].edge_index[:, missing_ids]
-                .detach()
-                .clone()
-            )
-
-            node_mapping = {
-                value.item(): idx
-                for idx, value in enumerate(n_ids)
-            }
-
-            add_edge_index = torch.tensor([
-                [
-                    node_mapping[val.item()]
-                    for val in row
-                ]
-                for row in add_edge_index
-            ])
-
-            add_edge_attr = (
-                data[
-                    'node',
-                    'to',
-                    'node'
-                ].edge_attr[missing_ids, :]
-                .detach()
-                .clone()
-            )
-
-            add_y = (
-                data[
-                    'node',
-                    'to',
-                    'node'
-                ].y[missing_ids]
-                .detach()
-                .clone()
-            )
-
-            batch[
-                'node',
-                'to',
-                'node'
-            ].edge_index = torch.cat(
-                (
-                    batch[
-                        'node',
-                        'to',
-                        'node'
-                    ].edge_index,
-                    add_edge_index
-                ),
-                1
-            )
-
-            batch[
-                'node',
-                'to',
-                'node'
-            ].edge_attr = torch.cat(
-                (
-                    batch[
-                        'node',
-                        'to',
-                        'node'
-                    ].edge_attr,
-                    add_edge_attr
-                ),
-                0
-            )
-
-            batch[
-                'node',
-                'to',
-                'node'
-            ].y = torch.cat(
-                (
-                    batch[
-                        'node',
-                        'to',
-                        'node'
-                    ].y,
-                    add_y
-                ),
-                0
-            )
-
-            mask = torch.cat(
-                (
-                    mask,
-                    torch.ones(
-                        add_y.shape[0],
-                        dtype=torch.bool
-                    )
-                )
-            )
-        current_edge_ids = (
-            batch[
-                'node',
-                'to',
-                'node'
-            ].edge_attr[mask, 0]
+        # -------------------------------------------------------------
+        # 1. Identify the seed edges requested for this batch
+        # -------------------------------------------------------------
+        input_ids = (
+            batch[edge_type]
+            .input_id
             .detach()
             .cpu()
         )
 
+        batch_edge_inds = inds_cpu[input_ids]
+
+        # Original persistent EdgeIDs for the requested seed edges.
+        batch_edge_ids = (
+            loader.data[edge_type]
+            .edge_attr
+            .detach()
+            .cpu()[batch_edge_inds, 0]
+        )
+
+        # -------------------------------------------------------------
+        # 2. Find which edges in the sampled graph correspond to
+        #    those seed edges
+        # -------------------------------------------------------------
+        sampled_edge_ids = (
+            batch[edge_type]
+            .edge_attr[:, 0]
+            .detach()
+            .cpu()
+        )
+
+        mask_cpu = torch.isin(
+            sampled_edge_ids,
+            batch_edge_ids
+        )
+
+        # -------------------------------------------------------------
+        # CRITICAL FIX
+        #
+        # Save IDs for the edges ACTUALLY selected by mask.
+        #
+        # Previously:
+        #
+        #     edge_ids.append(batch_edge_ids)
+        #
+        # That can make edge_ids longer than y_true / y_pred because
+        # not every requested seed edge is necessarily present among
+        # the sampled message-passing edges.
+        #
+        # These IDs now have exactly the same order and length as
+        # out[mask].
+        # -------------------------------------------------------------
+        current_edge_ids = sampled_edge_ids[mask_cpu]
+
         edge_ids.append(current_edge_ids)
-        # Remove unique edge IDs
-        batch[
-            'node',
-            'to',
-            'node'
-        ].edge_attr = batch[
-            'node',
-            'to',
-            'node'
-        ].edge_attr[:, 1:]
 
-        batch[
-            'node',
-            'rev_to',
-            'node'
-        ].edge_attr = batch[
-            'node',
-            'rev_to',
-            'node'
-        ].edge_attr[:, 1:]
+        # -------------------------------------------------------------
+        # 3. Remove the temporary unique EdgeID column before giving
+        #    edge attributes to the model
+        # -------------------------------------------------------------
+        batch[edge_type].edge_attr = (
+            batch[edge_type].edge_attr[:, 1:]
+        )
 
-        batch.to(device)
+        batch[rev_edge_type].edge_attr = (
+            batch[rev_edge_type].edge_attr[:, 1:]
+        )
 
+        # -------------------------------------------------------------
+        # 4. Move batch to CPU / CUDA / MPS device
+        # -------------------------------------------------------------
+        batch = batch.to(device)
+
+        # Boolean mask must be on the same device as the model output.
+        mask = mask_cpu.to(device)
+
+        # -------------------------------------------------------------
+        # 5. Forward pass
+        # -------------------------------------------------------------
         out = model(
             batch.x_dict,
             batch.edge_index_dict,
             batch.edge_attr_dict
         )
 
-        out = out[
-            ('node', 'to', 'node')
-        ]
+        # Extract predictions for forward transaction edges.
+        out = out[edge_type]
 
-        # Move mask to same device
-        mask = mask.to(out.device)
+        # Keep only the seed edges that we identified above.
+        logits = out[mask]
 
-        out = out[mask]
+        ground_truth = (
+            batch[edge_type]
+            .y[mask]
+        )
 
-        pred = out.argmax(dim=-1)
+        # -------------------------------------------------------------
+        # 6. Predictions and laundering probabilities
+        # -------------------------------------------------------------
+        pred = logits.argmax(dim=-1)
 
-        # Probability of laundering class
         probability = torch.softmax(
-            out,
+            logits,
             dim=-1
         )[:, 1]
 
-        preds.append(pred)
-        scores.append(probability)
+        preds.append(pred.detach().cpu())
+        ground_truths.append(ground_truth.detach().cpu())
+        scores.append(probability.detach().cpu())
 
-        ground_truths.append(
-            batch[
-                'node',
-                'to',
-                'node'
-            ].y[mask]
-        )
-
-    pred = (
+    # -----------------------------------------------------------------
+    # Combine all batches
+    # -----------------------------------------------------------------
+    y_pred = (
         torch.cat(preds, dim=0)
-        .cpu()
         .numpy()
     )
 
-    ground_truth = (
+    y_true = (
         torch.cat(ground_truths, dim=0)
-        .cpu()
         .numpy()
     )
 
-    score = (
+    y_score = (
         torch.cat(scores, dim=0)
-        .cpu()
         .numpy()
     )
 
-    f1 = f1_score(
-        ground_truth,
-        pred,
-        zero_division=0
-    )
-    edge_id = (
+    edge_ids = (
         torch.cat(edge_ids, dim=0)
-        .cpu()
         .numpy()
         .astype(int)
     )
+
+    # -----------------------------------------------------------------
+    # IMPORTANT sanity check
+    #
+    # Pattern reporting requires a one-to-one relationship between:
+    #
+    # edge_id <-> true label <-> prediction <-> probability
+    # -----------------------------------------------------------------
+    if not (
+        len(y_true)
+        == len(y_pred)
+        == len(y_score)
+        == len(edge_ids)
+    ):
+        raise RuntimeError(
+            "Heterogeneous evaluation alignment error: "
+            f"y_true={len(y_true)}, "
+            f"y_pred={len(y_pred)}, "
+            f"y_score={len(y_score)}, "
+            f"edge_ids={len(edge_ids)}"
+        )
+
+    f1 = f1_score(
+        y_true,
+        y_pred,
+        zero_division=0
+    )
+
+    # Preserve existing training/validation behavior.
     if not return_details:
         return f1
 
+    # Full information needed for final test reporting.
     return {
         "f1": f1,
-        "y_true": ground_truth,
-        "y_pred": pred,
-        "y_score": score
+        "y_true": y_true,
+        "y_pred": y_pred,
+        "y_score": y_score,
+        "edge_ids": edge_ids
     }
 
 def save_model(model, optimizer, epoch, args, data_config):

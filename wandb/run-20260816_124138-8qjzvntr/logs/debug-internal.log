@@ -20759,3 +20759,8 @@
 {"time":"2026-08-17T11:25:06.970559-04:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/jacoblourie-university-of-maryland/your_proj_name/8qjzvntr/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
 {"time":"2026-08-17T11:25:06.970975-04:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/jacoblourie-university-of-maryland/your_proj_name/8qjzvntr/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
 {"time":"2026-08-17T11:25:06.97199-04:00","level":"ERROR+4","msg":"filestream: fatal error: filestream: error making HTTP request: POST https://api.wandb.ai/files/jacoblourie-university-of-maryland/your_proj_name/8qjzvntr/file_stream giving up after 10086 attempt(s): Post \"https://api.wandb.ai/files/jacoblourie-university-of-maryland/your_proj_name/8qjzvntr/file_stream\": dial tcp: lookup api.wandb.ai: no such host. got response: <nil>"}
+{"time":"2026-08-18T13:38:22.977325-04:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-08-18T13:38:22.977893-04:00","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-08-18T13:38:22.977929-04:00","level":"INFO","msg":"handler: closed"}
+{"time":"2026-08-18T13:38:22.978657-04:00","level":"INFO","msg":"sender: closed"}
+{"time":"2026-08-18T13:38:22.978693-04:00","level":"INFO","msg":"stream: all finished"}

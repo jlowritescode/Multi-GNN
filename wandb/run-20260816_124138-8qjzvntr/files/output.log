@@ -169,4 +169,31 @@
 100%|██████████| 542/542 [4:00:54<00:00, 26.67s/it]    
 2026-08-18 12:52:13,679 [INFO ] Train F1: 0.1382
 100%|██████████| 161/161 [14:13<00:00,  5.30s/it]
- 98%|█████████▊| 141/144 [15:23<00:16,  5.66s/it]
+100%|██████████| 144/144 [15:39<00:00,  6.53s/it]
+2026-08-18 13:22:07,453 [INFO ] Validation F1: 0.1844
+2026-08-18 13:22:07,455 [INFO ] Test F1: 0.2362
+100%|██████████| 144/144 [16:13<00:00,  6.76s/it]
+
+
+=================================================================
+FINAL TEST RESULTS
+=================================================================
+Precision:          0.1898
+Recall:             0.2980
+F1 Score:           0.2319
+Average Precision:  0.2420
+=================================================================
+2026-08-18 13:38:22,471 [INFO ] FINAL TEST RESULTS -- Precision: 0.1898, Recall: 0.2980, F1: 0.2319, Average Precision: 0.2420
+Traceback (most recent call last):
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 41, in <module>
+    main()
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/main.py", line 34, in main
+    train_gnn(tr_data, val_data, te_data, tr_inds, val_inds, te_inds, args, data_config)
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 1141, in train_gnn
+    }
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 1028, in train_hetero
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 521, in final_test_report
+    pattern_results = save_pattern_recall_reports(
+  File "/Users/jonlourie/GNN_project_laundry/Multi-GNN/training.py", line 52, in save_pattern_recall_reports
+    metrics["edge_ids"],
+KeyError: 'edge_ids'

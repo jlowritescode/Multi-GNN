@@ -2250,3 +2250,347 @@
 2026-08-18 08:51:18,039 [INFO ] Validation F1: 0.0000
 2026-08-18 08:51:18,041 [INFO ] Test F1: 0.0000
 2026-08-18 12:52:13,679 [INFO ] Train F1: 0.1382
+2026-08-18 13:22:07,453 [INFO ] Validation F1: 0.1844
+2026-08-18 13:22:07,455 [INFO ] Test F1: 0.2362
+2026-08-18 13:38:22,471 [INFO ] FINAL TEST RESULTS -- Precision: 0.1898, Recall: 0.2980, F1: 0.2319, Average Precision: 0.2420
+2026-08-18 14:05:38,636 [INFO ] Random seed set as 1
+2026-08-18 14:05:38,636 [INFO ] Retrieving data
+2026-08-18 14:05:40,762 [INFO ] Available Edge Features: ['EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering', 'Pattern']
+2026-08-18 14:06:00,702 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-18 14:06:00,704 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-18 14:06:00,704 [INFO ] Number of transactions = 5078345
+2026-08-18 14:06:00,704 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-18 14:06:00,704 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-18 14:06:00,837 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-18 14:06:00,938 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-18 14:06:00,949 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-18 14:06:00,950 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-18 14:06:00,951 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-18 14:06:00,986 [INFO ] Start: adding ports
+2026-08-18 14:11:17,537 [INFO ] Done: adding ports
+2026-08-18 14:11:17,949 [INFO ] train data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+    y=[3248921],
+    timestamps=[3248921],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+  }
+)
+2026-08-18 14:11:17,950 [INFO ] validation data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+    y=[4214445],
+    timestamps=[4214445],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+  }
+)
+2026-08-18 14:11:17,950 [INFO ] test data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+    y=[5078345],
+    timestamps=[5078345],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+  }
+)
+2026-08-18 14:11:18,027 [INFO ] Retrieved data in 339.39s
+2026-08-18 14:11:18,027 [INFO ] Running Training
+2026-08-18 14:11:26,142 [INFO ] +------------------------------------------+-----------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                             | Output Shape   | #Param   |
+|------------------------------------------+-----------------------------------------+----------------+----------|
+| GraphModule                              |                                         |                | 147,228  |
+| ├─(node_emb)ModuleDict                   | --                                      | --             | 198      |
+| │    └─(node)Linear                      | [150179, 2]                             | [150179, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                      | --             | 924      |
+| │    └─(node__to__node)Linear            | [700658, 6]                             | [700658, 66]   | 462      |
+| │    └─(node__rev_to__node)Linear        | [886394, 6]                             | [886394, 66]   | 462      |
+| ├─(convs)ModuleList                      | --                                      | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                      | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                      | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                      | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [700658, 198]                           | [700658, 50]   | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 198]                           | [886394, 50]   | 9,950    |
+| │    └─(1)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(2)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(3)ModuleDict                     | --                                      | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [700658, 50]                            | [700658, 25]   | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 50]                            | [886394, 25]   | 1,275    |
+| │    └─(4)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(5)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(6)ModuleDict                     | --                                      | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [700658, 25]                            | [700658, 2]    | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 25]                            | [886394, 2]    | 52       |
++------------------------------------------+-----------------------------------------+----------------+----------+
+2026-08-18 14:30:04,281 [INFO ] Random seed set as 1
+2026-08-18 14:30:04,282 [INFO ] Retrieving data
+2026-08-18 14:30:07,001 [INFO ] Available Edge Features: ['EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering', 'Pattern']
+2026-08-18 14:30:26,474 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-18 14:30:26,475 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-18 14:30:26,475 [INFO ] Number of transactions = 5078345
+2026-08-18 14:30:26,475 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-18 14:30:26,475 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-18 14:30:26,632 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-18 14:30:26,753 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-18 14:30:26,762 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-18 14:30:26,764 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-18 14:30:26,766 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-18 14:30:26,852 [INFO ] Start: adding ports
+2026-08-18 14:35:16,456 [INFO ] Done: adding ports
+2026-08-18 14:35:16,821 [INFO ] train data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+    y=[3248921],
+    timestamps=[3248921],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+  }
+)
+2026-08-18 14:35:16,821 [INFO ] validation data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+    y=[4214445],
+    timestamps=[4214445],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+  }
+)
+2026-08-18 14:35:16,821 [INFO ] test data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+    y=[5078345],
+    timestamps=[5078345],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+  }
+)
+2026-08-18 14:35:16,877 [INFO ] Retrieved data in 312.59s
+2026-08-18 14:35:16,877 [INFO ] Running Training
+2026-08-18 14:35:24,877 [INFO ] +------------------------------------------+-----------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                             | Output Shape   | #Param   |
+|------------------------------------------+-----------------------------------------+----------------+----------|
+| GraphModule                              |                                         |                | 147,228  |
+| ├─(node_emb)ModuleDict                   | --                                      | --             | 198      |
+| │    └─(node)Linear                      | [150179, 2]                             | [150179, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                      | --             | 924      |
+| │    └─(node__to__node)Linear            | [700658, 6]                             | [700658, 66]   | 462      |
+| │    └─(node__rev_to__node)Linear        | [886394, 6]                             | [886394, 66]   | 462      |
+| ├─(convs)ModuleList                      | --                                      | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                      | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                      | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                      | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [700658, 198]                           | [700658, 50]   | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 198]                           | [886394, 50]   | 9,950    |
+| │    └─(1)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(2)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(3)ModuleDict                     | --                                      | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [700658, 50]                            | [700658, 25]   | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 50]                            | [886394, 25]   | 1,275    |
+| │    └─(4)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(5)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(6)ModuleDict                     | --                                      | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [700658, 25]                            | [700658, 2]    | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 25]                            | [886394, 2]    | 52       |
++------------------------------------------+-----------------------------------------+----------------+----------+
+2026-08-18 15:58:11,546 [INFO ] Train F1: 0.0218
+2026-08-18 16:13:46,189 [INFO ] Validation F1: 0.2351
+2026-08-18 16:13:46,195 [INFO ] Test F1: 0.3770
+2026-08-18 16:13:46,224 [INFO ] Restored best validation model from epoch 0 (validation F1=0.2351)
+2026-08-18 16:21:04,863 [INFO ] FINAL TEST RESULTS -- Precision: 0.3263, Recall: 0.4432, F1: 0.3759, Average Precision: 0.3958
+2026-08-18 16:54:38,415 [INFO ] Random seed set as 1
+2026-08-18 16:54:38,415 [INFO ] Retrieving data
+2026-08-18 16:54:41,328 [INFO ] Available Edge Features: ['EdgeID', 'from_id', 'to_id', 'Timestamp', 'Amount Sent', 'Sent Currency', 'Amount Received', 'Received Currency', 'Payment Format', 'Is Laundering', 'Pattern']
+2026-08-18 16:55:10,973 [INFO ] Illicit ratio = 5177 / 5078345 = 0.10%
+2026-08-18 16:55:10,974 [INFO ] Number of nodes (holdings doing transcations) = 515088
+2026-08-18 16:55:10,974 [INFO ] Number of transactions = 5078345
+2026-08-18 16:55:10,975 [INFO ] Edge features being used: ['Timestamp', 'Amount Received', 'Received Currency', 'Payment Format']
+2026-08-18 16:55:10,975 [INFO ] Node features being used: ['Feature'] ("Feature" is a placeholder feature of all 1s)
+2026-08-18 16:55:11,427 [INFO ] number of days and transactions in the data: 18 days, 5078345 transactions
+2026-08-18 16:55:11,561 [INFO ] Calculate split: [[0, 1, 2, 3, 4, 5], [6, 7], [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+2026-08-18 16:55:11,576 [INFO ] Total train samples: 63.98% || IR: 0.08% || Train days: [0, 1, 2, 3, 4]
+2026-08-18 16:55:11,579 [INFO ] Total val samples: 19.01% || IR: 0.11% || Val days: [6, 7]
+2026-08-18 16:55:11,581 [INFO ] Total test samples: 17.01% || IR: 0.19% || Test days: [8, 9, 10, 11, 12]
+2026-08-18 16:55:11,752 [INFO ] Start: adding ports
+2026-08-18 17:01:33,290 [INFO ] Done: adding ports
+2026-08-18 17:01:33,943 [INFO ] train data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+    y=[3248921],
+    timestamps=[3248921],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 3248921],
+    edge_attr=[3248921, 6],
+  }
+)
+2026-08-18 17:01:33,943 [INFO ] validation data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+    y=[4214445],
+    timestamps=[4214445],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 4214445],
+    edge_attr=[4214445, 6],
+  }
+)
+2026-08-18 17:01:33,943 [INFO ] test data object: HeteroGraphData(
+  readout='edge',
+  node={ x=[515088, 1] },
+  (node, to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+    y=[5078345],
+    timestamps=[5078345],
+  },
+  (node, rev_to, node)={
+    edge_index=[2, 5078345],
+    edge_attr=[5078345, 6],
+  }
+)
+2026-08-18 17:01:34,033 [INFO ] Retrieved data in 415.64s
+2026-08-18 17:01:34,033 [INFO ] Running Training
+2026-08-18 17:01:45,688 [INFO ] +------------------------------------------+-----------------------------------------+----------------+----------+
+| Layer                                    | Input Shape                             | Output Shape   | #Param   |
+|------------------------------------------+-----------------------------------------+----------------+----------|
+| GraphModule                              |                                         |                | 147,228  |
+| ├─(node_emb)ModuleDict                   | --                                      | --             | 198      |
+| │    └─(node)Linear                      | [150179, 2]                             | [150179, 66]   | 198      |
+| ├─(edge_emb)ModuleDict                   | --                                      | --             | 924      |
+| │    └─(node__to__node)Linear            | [700658, 6]                             | [700658, 66]   | 462      |
+| │    └─(node__rev_to__node)Linear        | [886394, 6]                             | [886394, 66]   | 462      |
+| ├─(convs)ModuleList                      | --                                      | --             | 53,064   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| │    └─(1)ModuleDict                     | --                                      | --             | 26,532   |
+| │    │    └─(node__to__node)GINEConv     | [150179, 66], [2, 700658], [700658, 66] | [150179, 66]   | 13,266   |
+| │    │    └─(node__rev_to__node)GINEConv | [150179, 66], [2, 886394], [886394, 66] | [150179, 66]   | 13,266   |
+| ├─(batch_norms)ModuleList                | --                                      | --             | 264      |
+| │    └─(0)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| │    └─(1)ModuleDict                     | --                                      | --             | 132      |
+| │    │    └─(node)BatchNorm              | [150179, 66]                            | [150179, 66]   | 132      |
+| ├─(emlps)ModuleList                      | --                                      | --             | 70,224   |
+| │    └─(0)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| │    └─(1)ModuleList                     | --                                      | --             | 35,112   |
+| │    │    └─(0)ModuleDict                | --                                      | --             | 26,268   |
+| │    │    └─(1)ModuleDict                | --                                      | --             | --       |
+| │    │    └─(2)ModuleDict                | --                                      | --             | 8,844    |
+| ├─(mlp)ModuleList                        | --                                      | --             | 22,554   |
+| │    └─(0)ModuleDict                     | --                                      | --             | 19,900   |
+| │    │    └─(node__to__node)Linear       | [700658, 198]                           | [700658, 50]   | 9,950    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 198]                           | [886394, 50]   | 9,950    |
+| │    └─(1)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(2)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 50]                            | [700658, 50]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 50]                            | [886394, 50]   | --       |
+| │    └─(3)ModuleDict                     | --                                      | --             | 2,550    |
+| │    │    └─(node__to__node)Linear       | [700658, 50]                            | [700658, 25]   | 1,275    |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 50]                            | [886394, 25]   | 1,275    |
+| │    └─(4)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)ReLU         | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)ReLU     | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(5)ModuleDict                     | --                                      | --             | --       |
+| │    │    └─(node__to__node)Dropout      | [700658, 25]                            | [700658, 25]   | --       |
+| │    │    └─(node__rev_to__node)Dropout  | [886394, 25]                            | [886394, 25]   | --       |
+| │    └─(6)ModuleDict                     | --                                      | --             | 104      |
+| │    │    └─(node__to__node)Linear       | [700658, 25]                            | [700658, 2]    | 52       |
+| │    │    └─(node__rev_to__node)Linear   | [886394, 25]                            | [886394, 2]    | 52       |
++------------------------------------------+-----------------------------------------+----------------+----------+
