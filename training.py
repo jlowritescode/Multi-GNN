@@ -11,7 +11,7 @@ import logging
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import copy
 from pathlib import Path
 from datetime import datetime
 
@@ -664,8 +664,19 @@ def final_test_report(
     # SAVE DEFAULT FINAL METRICS
     # ============================================================
 
+    if args.tds and args.flow_tds:
+        experiment = "multi_gin_tds_flowtds"
+    elif args.tds:
+        experiment = "multi_gin_tds"
+    elif args.flow_tds:
+        experiment = "multi_gin_flowtds"
+    else:
+        experiment = "multi_gin_baseline"
+
     final_metrics_df = pd.DataFrame(
         [{
+            "experiment": experiment,
+            "seed": args.seed,
             "precision": default_precision,
             "recall": default_recall,
             "f1": default_f1,
@@ -956,7 +967,9 @@ def train_homo(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, mod
 
 def train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, model, optimizer, loss_fn, args, config, device, val_data, te_data, data_config):
     #training
-    best_val_f1 = 0
+    best_val_f1 = -1.0
+    best_model_state = None
+    best_epoch = None
     for epoch in range(config.epochs):
         total_loss = total_examples = 0
         preds = []
@@ -1003,18 +1016,48 @@ def train_hetero(tr_loader, val_loader, te_loader, tr_inds, val_inds, te_inds, m
         logging.info(f'Validation F1: {val_f1:.4f}')
         logging.info(f'Test F1: {te_f1:.4f}')
 
-        if epoch == 0:
-            wandb.log({"best_test_f1": te_f1}, step=epoch)
-        elif val_f1 > best_val_f1:
+        if val_f1 > best_val_f1:
+
             best_val_f1 = val_f1
-            wandb.log({"best_test_f1": te_f1}, step=epoch)
+            best_epoch = epoch
+
+            # Save the best-validation model in memory
+            best_model_state = copy.deepcopy(
+                model.state_dict()
+            )
+
+            wandb.log(
+                {
+                    "best_validation_f1": val_f1,
+                    "best_test_f1": te_f1,
+                    "best_epoch": epoch
+                },
+                step=epoch
+            )
+
             if args.save_model:
-                save_model(model, optimizer, epoch, args, data_config)
+                save_model(
+                    model,
+                    optimizer,
+                    epoch,
+                    args,
+                    data_config
+                )
         
     # ========================================================
     # FINAL TEST EVALUATION
     # ========================================================
+    # Restore model from epoch with best validation F1
+    if best_model_state is not None:
+        model.load_state_dict(
+            best_model_state
+        )
 
+        logging.info(
+            f"Restored best validation model "
+            f"from epoch {best_epoch} "
+            f"(validation F1={best_val_f1:.4f})"
+        )
     final_metrics = evaluate_hetero(
         te_loader,
         te_inds,
